@@ -25,39 +25,25 @@ import ProjectVersions.openosrsVersion
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.3.61"
-    kotlin("kapt") version "1.3.61"
-}
-
 version = "0.0.1"
 
-project.extra["PluginName"] = "Kotlin example" // This is the name that is used in the external plugin manager panel
-project.extra["PluginDescription"] = "Kotlin example plugin" // This is the description that is used in the external plugin manager panel
+project.extra["PluginName"] = "Auto Tanker"
+project.extra["PluginDescription"] = "Auto Tanker for F2P."
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-
-    kapt(Libraries.pf4j)
+    annotationProcessor(Libraries.lombok)
+    annotationProcessor(Libraries.pf4j)
 
     compileOnly("com.openosrs:runelite-api:$openosrsVersion+")
     compileOnly("com.openosrs:runelite-client:$openosrsVersion+")
 
     compileOnly(Libraries.guice)
     compileOnly(Libraries.javax)
+    compileOnly(Libraries.lombok)
     compileOnly(Libraries.pf4j)
-    compileOnly(Libraries.slf4j)
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions {
-            jvmTarget = "11"
-            freeCompilerArgs = listOf("-Xjvm-default=enable")
-        }
-        sourceCompatibility = "11"
-    }
-
     jar {
         manifest {
             attributes(mapOf(
