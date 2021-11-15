@@ -2,8 +2,8 @@ import ProjectVersions.openosrsVersion
 
 version = "1.0.0"
 
-project.extra["PluginName"] = "[w] Auto Tanker"
-project.extra["PluginDescription"] = "Auto Tanker for F2P."
+project.extra["PluginName"] = "[w] Bank Auto Skiller"
+project.extra["PluginDescription"] = "Automatically do bank skilling activities."
 
 dependencies {
     annotationProcessor(Libraries.lombok)

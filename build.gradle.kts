@@ -15,8 +15,8 @@ apply<BootstrapPlugin>()
 subprojects {
     group = "com.example"
 
-    project.extra["PluginProvider"] = "willeum"
-    project.extra["ProjectSupportUrl"] = "stfu"
+    project.extra["PluginProvider"] = "willeum#6904"
+    project.extra["ProjectSupportUrl"] = "willeum#6904"
     project.extra["PluginLicense"] = "3-Clause BSD License"
 
     repositories {

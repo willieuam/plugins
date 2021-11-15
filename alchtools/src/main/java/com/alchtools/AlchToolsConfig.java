@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2018, Andrew EP | ElPinche256 <https://github.com/ElPinche256>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,20 +22,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.alchtools;
 
-rootProject.name = "plugins"
+import net.runelite.client.config.Config;
+import net.runelite.client.config.ConfigGroup;
+import net.runelite.client.config.ConfigItem;
 
-include(":autotanker")
-include(":bankskiller")
-include(":alchtools")
-include(":playernotifier")
+@ConfigGroup("AlchToolsConfig")
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+public interface AlchToolsConfig extends Config
+{
+	@ConfigItem(
+		keyName = "alchMenuOption",
+		name = "Alch Menu Option",
+		description = "Enable menu option on selected items to 1-click alch"
+	)
+	default boolean alchMenuOption()
+	{
+		return true;
+	}
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+	@ConfigItem(
+			keyName = "items",
+			name = "Target Items",
+			description = "Items to add 1-click alch menu option on."
+	)
+	default String items()
+	{
+		return "";
+	}
+
+	@ConfigItem(
+			keyName = "autoAlch",
+			name = "Auto Alch [not implemented]",
+			description = "Automatically alch."
+	)
+	default boolean autoAlch()
+	{
+		return true;
+	}
 }
