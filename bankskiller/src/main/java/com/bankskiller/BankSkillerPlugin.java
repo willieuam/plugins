@@ -64,7 +64,7 @@ public class BankSkillerPlugin extends Plugin {
     }
 
     private void reset() {
-        log.info("RESET" + config.actionsScript());
+        //log.info("RESET" + config.actionsScript());
         run = false;
         actions = parseActionsScript(config.actionsScript());
         action = 0;

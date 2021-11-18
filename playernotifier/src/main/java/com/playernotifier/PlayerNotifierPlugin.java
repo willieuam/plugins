@@ -104,6 +104,16 @@ public class PlayerNotifierPlugin extends Plugin {
 		// Player is in Clan, and set to white list clan
 		if (config.whiteListClan() && this.playerInClan(player)) { return; }
 
+		// Do Auto actions according to settings
+
+		if (config.autoLog()) {
+			this.autoLog();
+		}
+
+		if (config.autoAttack()) {
+			this.autoAttack(player, config.autoAttackType());
+		}
+
 		// Do notifications according to settings
 
 		if (config.clientNotif()) {
@@ -119,11 +129,11 @@ public class PlayerNotifierPlugin extends Plugin {
 		}
 	}
 
-	@Subscribe
-	protected void onSoundEffectPlayed(SoundEffectPlayed event) {
-		if (event == null) { return; }
-		log.info(String.valueOf(event.getSoundId()));
-	}
+	//@Subscribe
+	//protected void onSoundEffectPlayed(SoundEffectPlayed event) {
+	//	if (event == null) { return; }
+	//	log.info(String.valueOf(event.getSoundId()));
+	//}
 
 	private void updateWhiteList() {
 		this.whitelist = config.whiteList().trim().split("\\s*,\\s*");
@@ -161,6 +171,164 @@ public class PlayerNotifierPlugin extends Plugin {
 						")" +
 						" spawned!"
 				);
+	}
+
+	private void autoLog() {
+		log.info("autoLog()");
+		this.clientThread.invoke(() -> {
+			client.invokeMenuAction(
+					"Logout",
+					"",
+					1,
+					MenuAction.CC_OP.getId(),
+					-1,
+					11927560
+			);
+		});
+	}
+
+	private void autoAttack(Player player, AutoAttack type) {
+		log.info("autoAttack()");
+		if (type == AutoAttack.ATTACK) {
+			this.autoAttackAttack(player);
+		} else {
+			this.autoAttackSpell(player, type);
+		}
+	}
+
+	private String combatLevelCol(Actor target) {
+		Player player = client.getLocalPlayer();
+		if (player == null) {
+			throw new IllegalArgumentException("This should not be possible.");
+		}
+
+		int combatLevelDiff = target.getCombatLevel() - player.getCombatLevel();
+
+		if (combatLevelDiff < -10) {
+			combatLevelDiff = -10;
+		} else if (combatLevelDiff > 10) {
+			combatLevelDiff = 10;
+		}
+
+		// https://oldschool.runescape.wiki/w/Combat_level#Colours
+
+		switch (combatLevelDiff) {
+			case (10):
+				return "ff0000";
+			case (9):
+			case (8):
+			case (7):
+				return "ff3000";
+			case (6):
+			case (5):
+			case (4):
+				return "ff7000";
+			case (3):
+			case (2):
+			case (1):
+				return "ffb000";
+			case (0):
+				return "ffff00";
+			case (-1):
+			case (-2):
+			case (-3):
+				return "c0ff00";
+			case (-4):
+			case (-5):
+			case (-6):
+				return "80ff00";
+			case (-7):
+			case (-8):
+			case (-9):
+				return "40ff00";
+			case (-10):
+				return "00ff00";
+			default:
+				throw new IllegalArgumentException("This should not be possible.");
+		}
+	}
+
+	private void autoAttackAttack(Player player) {
+		log.info("autoAttackAttack()");
+		log.info("---------------------------------------------------");
+		log.info("Attack");
+		log.info("<col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")");
+		log.info(String.valueOf(player.getPlayerId()));
+		log.info(String.valueOf(MenuAction.PLAYER_SECOND_OPTION.getId()));
+		log.info(String.valueOf(0));
+		log.info(String.valueOf(0));
+		log.info("---------------------------------------------------");
+
+		//this.clientThread.invoke(() -> {
+		//	client.invokeMenuAction(
+		//			"Attack",
+		//			"<col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")",
+		//			player.getPlayerId(),
+		//			MenuAction.PLAYER_SECOND_OPTION.getId(),
+		//			0,
+		//			0
+		//
+		//	);
+		//});
+	}
+
+	private void autoAttackSpell(Player player, AutoAttack type) {
+		log.info("autoAttackSpell()");
+		MenuEntry action = new MenuEntry();
+		log.info("1");
+		final int VARBIT_SPELLBOOK_HIDDEN = 6718;
+		final int VARBIT_SPELLBOOK = 4070;
+
+		final Widget widget = client.getWidget(type.getWidgetInfo());
+		log.info("2");
+		if (widget == null) {
+			return;
+		}
+		log.info("3");
+		log.info(String.valueOf(client.getVarbitValue(VARBIT_SPELLBOOK_HIDDEN) + " == " + 1));
+		log.info(String.valueOf(client.getVarbitValue(VARBIT_SPELLBOOK) + " != " + type.getSpellbook()));
+		log.info(String.valueOf(widget.getSpriteId() + " == " +  type.getDisabledSpriteId()));
+		log.info(String.valueOf(widget.getSpriteId() + " != " +  type.getEnabledSpriteId()));
+		if (client.getVarbitValue(VARBIT_SPELLBOOK_HIDDEN) == 1 ||
+				client.getVarbitValue(VARBIT_SPELLBOOK) != type.getSpellbook() ||
+				widget.getSpriteId() == type.getDisabledSpriteId() ||
+				widget.getSpriteId() != type.getEnabledSpriteId()) {
+			return;
+		}
+		log.info("4");
+		action.setOption("Cast");
+		action.setTarget(
+				"<col=00ff00>" + type.getName() + "</col><col=ffffff> -> <col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")"
+		);
+		action.setIdentifier(player.getPlayerId());
+		action.setOpcode(MenuAction.SPELL_CAST_ON_PLAYER.getId());
+		action.setParam0(0);
+		action.setParam1(0);
+		log.info("5");
+		//client.setSelectedSpellName("<col=00ff00>" + widget.getName() + "</col>");
+		//client.setSelectedSpellWidget(widget.getId());
+		//client.setSelectedSpellChildIndex(-1);
+
+		log.info("---------------------------------------------------");
+		log.info(action.toString());
+		log.info(action.getOption());
+		log.info(action.getTarget());
+		log.info(String.valueOf(action.getIdentifier()));
+		log.info(String.valueOf(action.getOpcode()));
+		log.info(String.valueOf(action.getParam0()));
+		log.info(String.valueOf(action.getParam1()));
+		log.info("---------------------------------------------------");
+
+		//this.clientThread.invoke(() -> {
+		//	client.invokeMenuAction(
+		//			action.getOption(),
+		//			action.getTarget(),
+		//			action.getIdentifier(),
+		//			action.getOpcode(),
+		//			action.getParam0(),
+		//			action.getParam1()
+		//	);
+		//});
 	}
 
 	private boolean isPvp() {

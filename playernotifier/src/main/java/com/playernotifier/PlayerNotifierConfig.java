@@ -24,6 +24,7 @@
  */
 package com.playernotifier;
 
+import com.openosrs.client.game.AttackStyle;
 import net.runelite.api.SoundEffectVolume;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
@@ -90,9 +91,53 @@ public interface PlayerNotifierConfig extends Config
 	}
 
 	@ConfigSection(
-			name = "Whitelist",
+			name = "Auto",
 			description = "",
 			position = 5,
+			keyName = "autoSection"
+	)
+	String autoSection = "autoSection";
+
+	@ConfigItem(
+			keyName = "autoLog",
+			name = "Auto Log",
+			description = "Automatically log out if notifying.",
+			section = "autoSection",
+			position = 0
+	)
+	default boolean autoLog()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "autoAttack",
+			name = "Auto Attack",
+			description = "Automatically attack player if notifying.",
+			section = "autoSection",
+			position = 1
+	)
+	default boolean autoAttack()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "autoAttackType",
+			name = "Attack Type",
+			description = "Type of attack to do on player if Auto Attack is enabled. If the chosen option is unavailable, its not performed (e.g. missing runes or wrong spellbok)",
+			section = "autoSection",
+			position = 2
+	)
+	default AutoAttack autoAttackType()
+	{
+		return AutoAttack.ATTACK;
+	}
+
+	@ConfigSection(
+			name = "Whitelist",
+			description = "",
+			position = 6,
 			keyName = "whitelistSection"
 	)
 	String whitelistSection = "whitelistSection";
