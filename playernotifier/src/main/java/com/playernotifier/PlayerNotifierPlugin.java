@@ -193,10 +193,8 @@ public class PlayerNotifierPlugin extends Plugin {
 
 	private void autoAttack(Player player, AutoAttack type) {
 		if (type == AutoAttack.ATTACK) {
-			log.info("this.autoAttackAttack(player);");
 			this.autoAttackAttack(player);
 		} else {
-			log.info("this.autoAttackSpell(player);");
 			this.autoAttackSpell(player, type);
 		}
 	}
@@ -275,44 +273,24 @@ public class PlayerNotifierPlugin extends Plugin {
 			return;
 		}
 
-		//log.info("client.getVarbitValue(VARBIT_SPELLBOOK_HIDDEN) == 1");
-		//log.info(client.getVarbitValue(VARBIT_SPELLBOOK_HIDDEN) + " == " + 1);
-		log.info("client.getVarbitValue(VARBIT_SPELLBOOK)  != type.getSpellbook()");
-		log.info(client.getVarbitValue(VARBIT_SPELLBOOK) + " != " + type.getSpellbook());
-		log.info("widget.getSpriteId() == type.getDisabledSpriteId()");
-		log.info(widget.getSpriteId() + " == " + type.getDisabledSpriteId());
-		log.info("widget.getSpriteId() != type.getEnabledSpriteId()");
-		log.info(widget.getSpriteId() + " != " + type.getEnabledSpriteId());
-
 		if (client.getVarbitValue(VARBIT_SPELLBOOK) != type.getSpellbook() ||
 				widget.getSpriteId() == type.getDisabledSpriteId() ||
 				widget.getSpriteId() != type.getEnabledSpriteId()) {
 			return;
 		}
 
-		log.info("1");
-
-		client.setSelectedSpellName("<col=00ff00>" + widget.getName() + "</col>");
-		client.setSelectedSpellWidget(widget.getId());
-		client.setSelectedSpellChildIndex(-1);
-
-		log.info("---------------------------------------------------");
-		log.info("Cast");
-		log.info("<col=00ff00>" + type.getName() + "<col=ffffff> -> <col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")");
-		log.info(String.valueOf(player.getPlayerId()));
-		log.info(String.valueOf(MenuAction.SPELL_CAST_ON_PLAYER.getId()));
-		log.info(String.valueOf(0));
-		log.info(String.valueOf(0));
-		log.info("---------------------------------------------------");
-
 		this.clientThread.invoke(() -> {
+			client.setSelectedSpellName("<col=00ff00>" + widget.getName() + "</col>");
+			client.setSelectedSpellWidget(widget.getId());
+			client.setSelectedSpellChildIndex(-1);
+
 			client.invokeMenuAction(
-					"Cast",
-					"<col=00ff00>" + type.getName() + "<col=ffffff> -> <col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")",
-					player.getPlayerId(),
-					MenuAction.SPELL_CAST_ON_PLAYER.getId(),
-					0,
-					0
+				"Cast",
+				"<col=00ff00>" + type.getName() + "<col=ffffff> -> <col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")",
+				player.getPlayerId(),
+				MenuAction.SPELL_CAST_ON_PLAYER.getId(),
+				0,
+				0
 			);
 		});
 	}

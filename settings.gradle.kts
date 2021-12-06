@@ -26,11 +26,12 @@
 rootProject.name = "plugins"
 
 include(":autotanker")
-include(":bankskiller")
-include(":alchtools")
+//include(":bankskiller")
+//include(":alchtools")
 include(":playernotifier")
 include(":cwa")
 include(":spammer")
+//include(":playerindicatorssnipelist")
 
 for (project in rootProject.children) {
     project.apply {

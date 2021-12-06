@@ -19,7 +19,7 @@ import org.pf4j.Extension;
 
 @Extension
 @PluginDescriptor(
-	name = "[w] Auto Tanker",
+	name = "Auto Tanker",
 	description = "Auto Tanker for F2P.",
 	tags = {"tank", "pizza", "f2p"},
 	enabledByDefault = false
