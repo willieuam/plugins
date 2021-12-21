@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.0"
+version = "1.0.1"
 
 project.extra["PluginName"] = "[w] Bank Auto Skiller"
 project.extra["PluginDescription"] = "Automatically do bank skilling activities."

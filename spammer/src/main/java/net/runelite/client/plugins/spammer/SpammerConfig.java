@@ -131,6 +131,18 @@ public interface SpammerConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "useFirstFourChars",
+			name = "Smaller Pile Names",
+			description = "Spam the first four characters of a piles name opposed to the full name",
+			position = 2,
+			section = pileSpammerSection
+	)
+	default boolean smallerPileNames()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "pileKeybind",
 			name = "Pile Keybind",
 			description = "Configure what button to press to spam your current target",
@@ -143,24 +155,14 @@ public interface SpammerConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "useFirstFourChars",
-			name = "Smaller Pile Names",
-			description = "Spam the first four characters of a piles name opposed to the full name",
-			position = 2,
+			keyName = "autoPileSpamToggle",
+			name = "Auto Pile Spam",
+			description = "Configure what button to press to automatically spam your current target",
+			position = 4,
 			section = pileSpammerSection
 	)
-	default boolean smallerPileNames()
+	default Keybind autoPileSpamKeybind()
 	{
-		return true;
+		return Keybind.NOT_SET;
 	}
-
-	//@ConfigItem(
-	//		keyName = "chatboxInputScriptId",
-	//		name = "chatboxInputScriptId",
-	//		description = ""
-	//)
-	//default int chatboxInputScriptId()
-	//{
-	//	return 1;
-	//}
 }

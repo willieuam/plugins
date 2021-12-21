@@ -27,6 +27,7 @@ package com.alchtools;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
+import net.runelite.client.config.Keybind;
 
 @ConfigGroup("AlchToolsConfig")
 
@@ -39,7 +40,7 @@ public interface AlchToolsConfig extends Config
 	)
 	default boolean alchMenuOption()
 	{
-		return true;
+		return false;
 	}
 
 	@ConfigItem(
@@ -54,11 +55,31 @@ public interface AlchToolsConfig extends Config
 
 	@ConfigItem(
 			keyName = "autoAlch",
-			name = "Auto Alch [not implemented]",
+			name = "Auto Alch",
 			description = "Automatically alch."
 	)
 	default boolean autoAlch()
 	{
-		return true;
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "autoAlchItemId",
+			name = "Target Item",
+			description = "Item to auto alch."
+	)
+	default int autoAlchItemId()
+	{
+		return 0;
+	}
+
+	@ConfigItem(
+			keyName = "autoAlchBind",
+			name = "Start/Stop auto alching keybind",
+			description = ""
+	)
+	default Keybind autoAlchBind()
+	{
+		return Keybind.NOT_SET;
 	}
 }

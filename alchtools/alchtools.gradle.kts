@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.0"
+version = "1.0.1"
 
 project.extra["PluginName"] = "[w] Alch Tools"
 project.extra["PluginDescription"] = "Alch Tools"

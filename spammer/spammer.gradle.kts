@@ -25,7 +25,7 @@ import ProjectVersions.openosrsVersion
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "1.1.0"
+version = "2.0.0"
 
 project.extra["PluginName"] = "Spammer"
 project.extra["PluginDescription"] = "Spams a custom message upon keypress"

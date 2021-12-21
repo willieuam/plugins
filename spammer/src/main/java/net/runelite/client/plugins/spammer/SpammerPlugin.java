@@ -52,7 +52,7 @@ import org.pf4j.Extension;
 	name = "Keypress Spammer",
 	enabledByDefault = false,
 	description = "Spams a message upon a manually set keypress",
-	tags = {"Wildy", "Wilderness Location", "location", "loc", "pvp", "pklite"}
+	tags = {"spam"}
 )
 
 // shoutouts to OP from ly
@@ -74,8 +74,11 @@ public class SpammerPlugin extends Plugin
 	private KeyManager keyManager;
 
 	private String oldChat = "";
-	//private String smallerName = "";
 	private String opponentName = "";
+	private boolean autoSpam = false;
+	private int autoSpamDelay = 0;
+
+	private static final int OVERHEAD_TEXT_DURATION = 4;
 
 	@Provides
 	SpammerConfig getConfig(ConfigManager configManager)
@@ -89,10 +92,8 @@ public class SpammerPlugin extends Plugin
 		public void hotkeyPressed()
 		{
 			String messageOne = config.messageOne();
-			//log.info("messageOneHotkeyListener;");
 			if (!messageOne.equals(""))
 			{
-				//log.info("sendMessage(messageOne);");
 				sendMessage(messageOne);
 			}
 		}
@@ -130,12 +131,19 @@ public class SpammerPlugin extends Plugin
 		@Override
 		public void hotkeyPressed()
 		{
-			//log.info("pilehotkeyListener;");
 			if (!opponentName.equals(""))
 			{
-				//log.info("sendMessage(onfig.clanPrefix() + \" \" + opponentName);");
 				sendMessage(config.clanPrefix() + " " + opponentName);
 			}
+		}
+	};
+
+	private final HotkeyListener autoPileSpamHotkeyListener = new HotkeyListener(() -> config.autoPileSpamKeybind())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			autoSpam = !autoSpam;
 		}
 	};
 
@@ -148,8 +156,13 @@ public class SpammerPlugin extends Plugin
 
 		keyManager.registerKeyListener(pilehotkeyListener);
 
+		keyManager.registerKeyListener(autoPileSpamHotkeyListener);
+
 		oldChat = "";
 		opponentName = "";
+
+		autoSpam = false;
+		autoSpamDelay = 0;
 	}
 
 	@Override
@@ -161,8 +174,13 @@ public class SpammerPlugin extends Plugin
 
 		keyManager.unregisterKeyListener(pilehotkeyListener);
 
+		keyManager.unregisterKeyListener(autoPileSpamHotkeyListener);
+
 		oldChat = "";
 		opponentName = "";
+
+		autoSpam = false;
+		autoSpamDelay = 0;
 	}
 
 	@Subscribe
@@ -171,40 +189,32 @@ public class SpammerPlugin extends Plugin
 		final Actor player = client.getLocalPlayer();
 		if (player == null) { return; }
 
-		//log.info("onInteractingChanged 1");
-
 		final Actor source = event.getSource();
 		final Actor target = event.getTarget();
 		if (source == null) { return; }
 
-		//log.info("onInteractingChanged 2");
-
 		// Event is not from the Player
 		if (source != player) { return; }
-		//log.info("onInteractingChanged 3");
+
 		// Player interacting with nothing -> Reset Target name
 		if (target == null) { opponentName = ""; return; }
-		//log.info("onInteractingChanged 4");
 		opponentName = target.getName();
-		//log.info("opponentName: " + opponentName);
 		if (opponentName == null) { opponentName = ""; return; }
 
+		//smallerNameSize = ;
+
 		if (opponentName.length() > 4 && config.smallerPileNames()) {
-			//log.info("smallerName");
 			//hopefully will fix combined names being spammed
 			if (opponentName.substring(0,4).toLowerCase().equals(target.getName().substring(0,4).toLowerCase()))
 			{
 				opponentName = opponentName.substring(0,4);
-				//log.info("opponentName: " + opponentName);
 			}
 		}
-		//log.info("final opponentName: " + opponentName);
 	}
 
 	@Subscribe
 	private void onVarClientStrChanged(VarClientStrChanged varClient)
 	{
-		//log.info("onVarClientStrChanged");
 		String newChat = client.getVar(VarClientStr.CHATBOX_TYPED_TEXT);
 		if (varClient.getIndex() == VarClientStr.CHATBOX_TYPED_TEXT.getIndex() && !newChat.equals(oldChat))
 		{
@@ -212,19 +222,35 @@ public class SpammerPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	private void onGameTick(GameTick event) {
+		autoSpamDelay--;
+		if (autoSpamDelay < 0) { autoSpamDelay = 0; }
+
+		//log.info("autoSpamDelay:" + autoSpamDelay);
+		if (autoSpam && autoSpamDelay <= 0 && !opponentName.equals("")) {
+			sendMessage(config.clanPrefix() + " " + opponentName);
+			autoSpamDelay += OVERHEAD_TEXT_DURATION * 2;
+		}
+	}
+
+	//@Subscribe
+	//private void onChatMessage(ChatMessage event) {
+	//	if (client.getLocalPlayer() == null) { return; }
+	//
+	//	if (autoSpam && event.getName().equals(client.getLocalPlayer().getName())) {
+	//		autoSpamDelay += OVERHEAD_TEXT_DURATION * 2;
+	//	}
+	//}
+
 	private void sendMessage(String text)
 	{
-		//final int chatboxInputScriptId = config.chatboxInputScriptId();
-		final int chatboxInputScriptId = 96;
-		//log.info("sendMessage: " + text);
 		clientThread.invoke(() -> {
 			String cached = oldChat;
 			client.setVar(VarClientStr.CHATBOX_TYPED_TEXT, text);
-			client.runScript(chatboxInputScriptId);
-			//client.runScript(ScriptID.CHATBOX_INPUT, text);
+			client.runScript(5517, text); // 5517 = new pub chat script
 			oldChat = cached;
 			client.setVar(VarClientStr.CHATBOX_TYPED_TEXT, oldChat);
 		});
 	}
-
 }
