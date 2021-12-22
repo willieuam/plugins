@@ -101,7 +101,7 @@ public class AutoTankerPlugin extends Plugin {
 								entry.getOption(),
 								entry.getTarget(),
 								entry.getIdentifier(),
-								entry.getOpcode(),
+								entry.getType().getId(),
 								entry.getParam0(),
 								entry.getParam1()
 						)
@@ -113,13 +113,15 @@ public class AutoTankerPlugin extends Plugin {
 	}
 
 	private MenuEntry getConsumableEntry(String itemName, int itemId, int itemIndex) {
-		return new MenuEntry("Eat",
+		return client.createMenuEntry(
+				"Eat",
 				"<col=ff9040>" + itemName,
 				itemId,
 				MenuAction.ITEM_FIRST_OPTION.getId(),
 				itemIndex,
 				WidgetInfo.INVENTORY.getId(),
-				false);
+				false
+		);
 	}
 
 	private void combinePizza() {
@@ -157,7 +159,7 @@ public class AutoTankerPlugin extends Plugin {
 					combineEntry.getOption(),
 					combineEntry.getTarget(),
 					combineEntry.getIdentifier(),
-					combineEntry.getOpcode(),
+					combineEntry.getType().getId(),
 					combineEntry.getParam0(),
 					combineEntry.getParam1()
 			);
@@ -165,14 +167,15 @@ public class AutoTankerPlugin extends Plugin {
 	}
 
 	private MenuEntry getCombineEntry(String itemName, int itemId, int itemIndex) {
-		return new MenuEntry(
+		return client.createMenuEntry(
 				"Use",
 				"<col=ff9040>" + itemName + "<col=ffffff> -> <col=ff9040>" + itemName,
 				itemId,
 				MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId(),
 				itemIndex,
 				WidgetInfo.INVENTORY.getId(),
-				false);
+				false
+		);
 	}
 
 }
