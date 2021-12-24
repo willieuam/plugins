@@ -169,7 +169,9 @@ public interface SpammerConfig extends Config
 	@ConfigItem(
 			keyName = "autoPileSpamDelay",
 			name = "Auto Pile Spam Tick Delay",
-			description = "Tick delay between auto pile spam messages."
+			description = "Tick delay between auto pile spam messages.",
+			position = 5,
+			section = pileSpammerSection
 	)
 	default int autoPileSpamDelay()
 	{
