@@ -72,8 +72,6 @@ public class wAutoTyperPlugin extends Plugin
 	private boolean enabled;
 	private String oldChat;
 
-	private static final int OVERHEAD_TEXT_DURATION = 4;
-
 	@Provides
 	wAutoTyperConfig getConfig(ConfigManager configManager)
 	{
@@ -145,7 +143,7 @@ public class wAutoTyperPlugin extends Plugin
 
 		this.sendMessage(message);
 		this.oldChat = message;
-		this.delay += OVERHEAD_TEXT_DURATION;
+		this.delay += config.delay();
 
 	}
 

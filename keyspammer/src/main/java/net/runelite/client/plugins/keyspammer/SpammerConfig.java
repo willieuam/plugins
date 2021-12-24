@@ -165,4 +165,14 @@ public interface SpammerConfig extends Config
 	{
 		return Keybind.NOT_SET;
 	}
+
+	@ConfigItem(
+			keyName = "autoPileSpamDelay",
+			name = "Auto Pile Spam Tick Delay",
+			description = "Tick delay between auto pile spam messages."
+	)
+	default int autoPileSpamDelay()
+	{
+		return 4;
+	}
 }

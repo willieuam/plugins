@@ -74,8 +74,6 @@ public class SpammerPlugin extends Plugin
 	private boolean autoSpam = false;
 	private int autoSpamDelay = 0;
 
-	private static final int OVERHEAD_TEXT_DURATION = 4;
-
 	@Provides
 	SpammerConfig getConfig(ConfigManager configManager)
 	{
@@ -226,7 +224,7 @@ public class SpammerPlugin extends Plugin
 		//log.info("autoSpamDelay:" + autoSpamDelay);
 		if (autoSpam && autoSpamDelay <= 0 && !opponentName.equals("")) {
 			sendMessage(config.clanPrefix() + " " + opponentName);
-			autoSpamDelay += OVERHEAD_TEXT_DURATION * 2;
+			autoSpamDelay += config.autoPileSpamDelay();
 		}
 	}
 

@@ -25,7 +25,7 @@ import ProjectVersions.openosrsVersion
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "1.0.0"
+version = "1.0.1"
 
 project.extra["PluginName"] = "Auto Typer"
 project.extra["PluginDescription"] = "Auto types custom message(s)."
