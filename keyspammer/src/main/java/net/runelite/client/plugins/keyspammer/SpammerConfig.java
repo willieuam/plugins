@@ -22,12 +22,12 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.runelite.client.plugins.spammer;
+package net.runelite.client.plugins.keyspammer;
 
 
 import net.runelite.client.config.*;
 
-@ConfigGroup("spammer")
+@ConfigGroup("keyspammer")
 public interface SpammerConfig extends Config
 {
 	@ConfigSection(

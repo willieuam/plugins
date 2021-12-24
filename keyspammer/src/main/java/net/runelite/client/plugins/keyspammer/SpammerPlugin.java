@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.runelite.client.plugins.spammer;
+package net.runelite.client.plugins.keyspammer;
 
 import javax.inject.Inject;
 
@@ -32,18 +32,14 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
-import net.runelite.api.ScriptID;
 import net.runelite.api.VarClientStr;
-import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ChatInput;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.opponentinfo.OpponentInfoPlugin;
 import net.runelite.client.util.HotkeyListener;
 import org.pf4j.Extension;
 
@@ -52,7 +48,7 @@ import org.pf4j.Extension;
 	name = "Keypress Spammer",
 	enabledByDefault = false,
 	description = "Spams a message upon a manually set keypress",
-	tags = {"spam"}
+	tags = {"spam", "key", "keypress"}
 )
 
 // shoutouts to OP from ly

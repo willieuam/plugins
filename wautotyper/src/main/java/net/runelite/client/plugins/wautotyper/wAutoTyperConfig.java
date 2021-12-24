@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019 Owain van Brakel <https:github.com/Owain94>
+ * Copyright (c) 2019, St0newall
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,6 @@
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -23,23 +22,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-rootProject.name = "plugins"
+package net.runelite.client.plugins.wautotyper;
 
-include(":autotanker")
-//include(":bankskiller")
-//include(":alchtools")
-include(":playernotifier")
-include(":cwa")
-include(":keyspammer")
-//include(":playerindicatorssnipelist")
-include(":wautotyper")
 
-for (project in rootProject.children) {
-    project.apply {
-        projectDir = file(name)
-        buildFileName = "$name.gradle.kts"
+import net.runelite.client.config.*;
 
-        require(projectDir.isDirectory) { "Project '${project.path} must have a $projectDir directory" }
-        require(buildFile.isFile) { "Project '${project.path} must have a $buildFile build script" }
-    }
+@ConfigGroup("wautotyper")
+public interface wAutoTyperConfig extends Config
+{
+	@ConfigItem(
+			keyName = "messages",
+			name = "Messages",
+			description = "List of messages to type, one per line."
+	)
+	default String messages()
+	{
+		return "";
+	}
+
+	@ConfigItem(
+			keyName = "toggleKeyBind",
+			name = "Toggle",
+			description = "Button to toggle auto typing"
+	)
+	default Keybind toggleKeyBind()
+	{
+		return Keybind.NOT_SET;
+	}
+
 }
