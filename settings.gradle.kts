@@ -25,14 +25,19 @@
 
 rootProject.name = "plugins"
 
-include(":autotanker")
 //include(":bankskiller")
 //include(":alchtools")
+//include(":playerindicatorssnipelist")
+//include(":waerialfishing")
+//include(":nightmareautopray")
+//include(":infernoautopray")
+
+include(":autotanker")
 include(":playernotifier")
 include(":cwa")
 include(":keyspammer")
-//include(":playerindicatorssnipelist")
 include(":wautotyper")
+include(":missingplayers")
 
 for (project in rootProject.children) {
     project.apply {
