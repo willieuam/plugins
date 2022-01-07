@@ -101,7 +101,7 @@ public interface PlayerNotifierConfig extends Config
 	@ConfigItem(
 			keyName = "autoAttackType",
 			name = "Attack Type",
-			description = "Type of attack to do on player if Auto Attack is enabled. If the chosen option is unavailable, its not performed (e.g. missing runes or wrong spellbok)",
+			description = "Type of attack to do on player if Auto Attack is enabled. If the chosen option is unavailable, its not performed (e.g. missing runes or wrong spellbook)",
 			section = "autoSection",
 			position = 2
 	)

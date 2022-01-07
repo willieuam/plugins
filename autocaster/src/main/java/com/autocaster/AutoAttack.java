@@ -1,4 +1,4 @@
-package com.playernotifier;
+package com.autocaster;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +12,7 @@ public enum AutoAttack {
     BARRAGE("Ice Barrage", 1, WidgetInfo.SPELL_ICE_BARRAGE, SpriteID.SPELL_ICE_BARRAGE, SpriteID.SPELL_ICE_BARRAGE_DISABLED),
     BLITZ("Ice Blitz", 1, WidgetInfo.SPELL_ICE_BLITZ, SpriteID.SPELL_ICE_BLITZ, SpriteID.SPELL_ICE_BLITZ_DISABLED),
     ENTANGLE("Entangle", 0, WidgetInfo.SPELL_ENTANGLE, SpriteID.SPELL_ENTANGLE, SpriteID.SPELL_ENTANGLE_DISABLED),
-    SNARE("Snare", 0, WidgetInfo.SPELL_SNARE, SpriteID.SPELL_SNARE, SpriteID.SPELL_SNARE_DISABLED),
-    ATTACK("", -1, null, -1, -1);
+    SNARE("Snare", 0, WidgetInfo.SPELL_SNARE, SpriteID.SPELL_SNARE, SpriteID.SPELL_SNARE_DISABLED);
 
     private final String name;
     private final int spellbook;

@@ -1,9 +1,9 @@
 import ProjectVersions.openosrsVersion
 
-version = "2.0.2"
+version = "1.0.1"
 
-project.extra["PluginName"] = "Keypress Spammer"
-project.extra["PluginDescription"] = "Spams a custom message upon keypress"
+project.extra["PluginName"] = "[w] Auto Caster"
+project.extra["PluginDescription"] = "Automatically cast spells on targets around you."
 
 dependencies {
     annotationProcessor(Libraries.lombok)

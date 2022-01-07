@@ -22,13 +22,13 @@ runelite-client/dependencies.txt
 .staging/
 hs_err*
 replay_pid*
+
 /bankskiller/
 /playerindicatorssnipelist/
 /alchtools/
 /waerialfishing/
 /nightmareautopray/
 /hideattack/
-/autotb/
 /infernoautopray/
 /wautoprayutils/
 /praytest/

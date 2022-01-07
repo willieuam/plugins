@@ -1,4 +1,4 @@
-package com.playernotifier;
+package com.autocaster;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -24,169 +24,111 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemStack;
+import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.util.HotkeyListener;
 import org.pf4j.Extension;
 
-import java.util.Collection;
+import java.util.*;
 
 @Extension
 @PluginDescriptor(
-	name = "[w] Player Notifier",
-	description = "Player Notifier",
-	tags = {"player", "notifier", "pker"},
+	name = "[w] Auto Caster",
+	description = "Automatically cast spells on targets around you.",
+	tags = {"player", "spell", "pk", "clan", "pvp"},
 	enabledByDefault = false
 )
 @Slf4j
-public class PlayerNotifierPlugin extends Plugin {
+public class AutoCasterPlugin extends Plugin {
 	@Inject
 	private Client client;
 
 	@Inject
-	private PlayerNotifierConfig config;
+	private AutoCasterConfig config;
 
 	@Inject
 	private ClientThread clientThread;
 
 	@Inject
-	private ChatMessageManager chatMessageManager;
-
-	@Inject
-	private SoundManager soundManager;
-
-	@Inject
-	private Notifier notifier;
+	private KeyManager keyManager;
 
 	// Provides our config
 	@Provides
-	PlayerNotifierConfig provideConfig(ConfigManager configManager) { return configManager.getConfig(PlayerNotifierConfig.class); }
+	AutoCasterConfig provideConfig(ConfigManager configManager) { return configManager.getConfig(AutoCasterConfig.class); }
 
-	protected String[] whitelist;
+	private boolean enabled;
+	private String[] whitelist;
+	private Map<String, Integer> cache;
+	private static final int cacheDuration = 250; // 250 ticks = 2:30
+	private int delay;
+	private static final int COMBAT_SPELL_DELAY = 5;
 
 	@Override
 	protected void startUp() {
 		this.updateWhiteList();
+		this.cache = new HashMap<>();
+		enabled = false;
+		delay = 0;
+		keyManager.registerKeyListener(toggleKeyBindListener);
 	}
 
 	@Override
 	protected void shutDown() {
 		this.whitelist = null;
+		this.cache = null;
+		enabled = false;
+		delay = 0;
+		keyManager.unregisterKeyListener(toggleKeyBindListener);
 	}
+
+	private final HotkeyListener toggleKeyBindListener = new HotkeyListener(() -> config.toggleKey())
+	{
+		@Override
+		public void hotkeyPressed()
+		{
+			enabled = !enabled;
+			log.info("Toggle: " + enabled);
+		}
+	};
 
 	@Subscribe
-	private void onConfigChanged(ConfigChanged event) {
-		if (!event.getGroup().equals("PlayerNotifierConfig")) { return; }
+	protected void onGameTick(GameTick event) {
+		log.info("onGameTick; Delay = " + delay);
+		log.info("Cache: " + cache.toString());
 
-		updateWhiteList();
+		tickCache();
+		delay--;
+		if (delay < 0) { delay = 0; }
+
+		if (!enabled || delay != 0) { return; }
+
+		Player target = target();
+		log.info("Target: " + target.getName());
+		autoAttackSpell(target, config.autoAttackType());
+		if (config.enableCache()) { addPlayerToCache(target); log.info("Cached"); }
+		delay = config.delay() == 0 ? COMBAT_SPELL_DELAY : config.delay();
 	}
 
-	@Subscribe
-	private void onPlayerSpawned(PlayerSpawned event) {
-		final Player player = event.getPlayer();
-		if (player == null) { return; }
-
-		final Player localPlayer = client.getLocalPlayer();
-		if (localPlayer == null) { return; }
-
-		// Player spawned is local player
-		if (player.getName().equalsIgnoreCase(localPlayer.getName())) { return; }
-
-		//final String playerName = player.getName();
-
-		// Set to only activate in PvP, and not currently in PvP
-		if (config.onlyPvp() && !this.isPvp()) { return; }
-
-		// If player is whitelisted, return
-		if (playerIsWhiteListed(player)) { return; }
-
-		// Do Auto actions according to settings
-
-		if (config.autoLog()) {
-			this.autoLog();
+	private List<Player> targets() {
+		log.info("---Get Targets---");
+		List<Player> targets = new ArrayList<>();
+		for (Player p : client.getPlayers()) {
+			if (p != client.getLocalPlayer() &&
+				!playerIsWhiteListed(p) &&
+				!playerInCache(p)) {
+				targets.add(p);
+				log.info(p.getName());
+			}
 		}
-
-		if (config.autoAttack() && this.isPvp()) { // Only attack in pvp, avoids maybe sending attack packet where its not possible
-			this.autoAttack(player, config.autoAttackType());
-		}
-
-		// Do notifications according to settings
-
-		if (config.clientNotif()) {
-			this.clientNotif(player);
-		}
-
-		if (config.soundNotif()) {
-			this.soundNotif();
-		}
-
-		if (config.chatNotif()) {
-			this.chatNotif(player);
-		}
+		log.info("---End Targets---");
+		return targets;
 	}
 
-	//@Subscribe
-	//protected void onSoundEffectPlayed(SoundEffectPlayed event) {
-	//	if (event == null) { return; }
-	//	log.info(String.valueOf(event.getSoundId()));
-	//}
-
-	private void updateWhiteList() {
-		this.whitelist = config.whiteList().trim().split("\\s*,\\s*");
-	}
-
-	private void chatNotif(Player player) {
-		final String message = new ChatMessageBuilder()
-				.append(ChatColorType.NORMAL)
-				.append("Player ")
-				.append(ChatColorType.HIGHLIGHT)
-				.append(player.getName())
-				.append(" (level-")
-				.append(String.valueOf(player.getCombatLevel()))
-				.append(")")
-				.append(ChatColorType.NORMAL)
-				.append(" spawned!")
-				.build();
-
-		chatMessageManager.queue(
-				QueuedMessage.builder()
-						.type(ChatMessageType.CONSOLE)
-						.runeLiteFormattedMessage(message)
-						.build());
-	}
-
-	private void soundNotif() {
-		client.playSoundEffect(SoundEffectID.TOWN_CRIER_BELL_DONG, config.soundNotifVolume());
-	}
-
-	private void clientNotif(Player player) {
-		notifier.notify("Player " +
-						player.getName() +
-						" (level-" +
-						player.getCombatLevel() +
-						")" +
-						" spawned!"
-				);
-	}
-
-	private void autoLog() {
-		this.clientThread.invoke(() -> {
-			client.invokeMenuAction(
-					"Logout",
-					"",
-					1,
-					MenuAction.CC_OP.getId(),
-					-1,
-					11927560
-			);
-		});
-	}
-
-	private void autoAttack(Player player, AutoAttack type) {
-		if (type == AutoAttack.ATTACK) {
-			this.autoAttackAttack(player);
-		} else {
-			this.autoAttackSpell(player, type);
-		}
+	private Player target() {
+		List<Player> targets = targets();
+		Random r = new Random();
+		return targets.get(r.nextInt(targets.size()));
 	}
 
 	private String combatLevelCol(Actor target) {
@@ -241,19 +183,6 @@ public class PlayerNotifierPlugin extends Plugin {
 		}
 	}
 
-	private void autoAttackAttack(Player player) {
-		this.clientThread.invoke(() -> {
-			client.invokeMenuAction(
-					"Attack",
-					"<col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")",
-					player.getPlayerId(),
-					MenuAction.PLAYER_SECOND_OPTION.getId(),
-					0,
-					0
-			);
-		});
-	}
-
 	private void autoAttackSpell(Player player, AutoAttack type) {
 		//final int VARBIT_SPELLBOOK_HIDDEN = 6718;
 		final int VARBIT_SPELLBOOK = 4070;
@@ -287,6 +216,21 @@ public class PlayerNotifierPlugin extends Plugin {
 
 	private boolean isPvp() {
 		return (client.getVar(Varbits.IN_WILDERNESS) == 1 || WorldType.isAllPvpWorld(client.getWorldType()));
+	}
+
+	private void addPlayerToCache(Player player) {
+		cache.put(Objects.requireNonNull(player.getName()).toLowerCase(), config.cacheDuration() == 0 ? cacheDuration : config.cacheDuration());
+	}
+
+	private boolean playerInCache(Player player) {
+		return cache.containsKey(Objects.requireNonNull(player.getName()).toLowerCase());
+	}
+
+	private void tickCache() {
+		for (String p : cache.keySet()) {
+			cache.put(p, (cache.get(p) - 1));
+			if (cache.get(p) == 0) { cache.remove(p); }
+		}
 	}
 
 	private boolean playerIsWhiteListed(Player player) {
@@ -338,5 +282,16 @@ public class PlayerNotifierPlugin extends Plugin {
 			}
 		}
 		return false;
+	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event) {
+		if (!event.getGroup().equals("PlayerNotifierConfig")) { return; }
+
+		updateWhiteList();
+	}
+
+	private void updateWhiteList() {
+		this.whitelist = config.whiteList().trim().split("\\s*,\\s*");
 	}
 }

@@ -226,15 +226,6 @@ public class SpammerPlugin extends Plugin
 		}
 	}
 
-	//@Subscribe
-	//private void onChatMessage(ChatMessage event) {
-	//	if (client.getLocalPlayer() == null) { return; }
-	//
-	//	if (autoSpam && event.getName().equals(client.getLocalPlayer().getName())) {
-	//		autoSpamDelay += OVERHEAD_TEXT_DURATION * 2;
-	//	}
-	//}
-
 	private void sendMessage(String text)
 	{
 		clientThread.invoke(() -> {
