@@ -27,8 +27,6 @@ import java.util.Map;
 	description = "Display missing players from CC",
 	tags = {"clan", "pvp", "cc", "friends", "chat", "fc"}
 )
-
-@Slf4j
 public class MissingPlayersPlugin extends Plugin
 {
 	@Inject
@@ -89,7 +87,6 @@ public class MissingPlayersPlugin extends Plugin
 
 		for (String pfc : fc.keySet()) {
 			if (!loc.contains(pfc)) {
-				log.info("missing: " + pfc);
 				missingPlayers.put(pfc, fc.get(pfc));
 			}
 		}
@@ -105,7 +102,6 @@ public class MissingPlayersPlugin extends Plugin
 		if (friendsChatManager == null) { return players; }
 
 		for (FriendsChatMember fcm : friendsChatManager.getMembers()) {
-			log.info("fc: " + fcm.getName());
 			players.put(fcm.getName(), fcm.getWorld());
 		}
 		return players;
@@ -115,7 +111,6 @@ public class MissingPlayersPlugin extends Plugin
 		List<String> players = new ArrayList<>();
 
 		for (Player p : client.getPlayers()) {
-			log.info("loc: " + p.getName());
 			players.add(p.getName());
 		}
 		return players;

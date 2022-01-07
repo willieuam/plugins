@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.cwa;
+package com.cwa;
 
 import lombok.Getter;
 import lombok.Setter;

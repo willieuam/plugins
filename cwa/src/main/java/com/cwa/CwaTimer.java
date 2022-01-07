@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.cwa;
+package com.cwa;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;

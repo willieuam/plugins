@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package net.runelite.client.plugins.cwa;
+package com.cwa;
 
 
 import net.runelite.api.SoundEffectVolume;

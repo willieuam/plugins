@@ -43,6 +43,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.HotkeyListener;
 import org.pf4j.Extension;
 
+// shoutouts to OP from ly
+
 @Extension
 @PluginDescriptor(
 	name = "Keypress Spammer",
@@ -50,10 +52,6 @@ import org.pf4j.Extension;
 	description = "Spams a message upon a manually set keypress",
 	tags = {"spam", "key", "keypress"}
 )
-
-// shoutouts to OP from ly
-
-@Slf4j
 public class SpammerPlugin extends Plugin
 {
 	@Inject
@@ -199,7 +197,7 @@ public class SpammerPlugin extends Plugin
 
 		if (opponentName.length() > 4 && config.smallerPileNames()) {
 			//hopefully will fix combined names being spammed
-			if (opponentName.substring(0,4).toLowerCase().equals(target.getName().substring(0,4).toLowerCase()))
+			if (opponentName.substring(0,4).equalsIgnoreCase(target.getName().substring(0,4)))
 			{
 				opponentName = opponentName.substring(0,4);
 			}

@@ -1,4 +1,5 @@
-package net.runelite.client.plugins.cwa;
+package com.cwa;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
