@@ -15,10 +15,8 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Extension
 @PluginDescriptor(
@@ -27,6 +25,7 @@ import java.util.Map;
 	description = "Display missing players from CC",
 	tags = {"clan", "pvp", "cc", "friends", "chat", "fc"}
 )
+@Slf4j
 public class MissingPlayersPlugin extends Plugin
 {
 	@Inject
@@ -94,6 +93,14 @@ public class MissingPlayersPlugin extends Plugin
 		return missingPlayers;
 	}
 
+	private void a(String s) {
+		byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
+		log.info("s:" + s);
+		for (byte b : bytes) {
+			log.info(String.valueOf(b));
+		}
+	}
+
 	private Map<String, Integer> playersInFriendsChat() {
 		HashMap<String, Integer> players = new HashMap<>();
 
@@ -102,7 +109,7 @@ public class MissingPlayersPlugin extends Plugin
 		if (friendsChatManager == null) { return players; }
 
 		for (FriendsChatMember fcm : friendsChatManager.getMembers()) {
-			players.put(fcm.getName(), fcm.getWorld());
+			players.put(correctName(fcm.getName()), fcm.getWorld());
 		}
 		return players;
 	}
@@ -114,5 +121,15 @@ public class MissingPlayersPlugin extends Plugin
 			players.add(p.getName());
 		}
 		return players;
+	}
+
+	private String correctName(String name) { // the fc player has the wrong char code for a space compared to the other name???
+		byte[] bytes = name.getBytes(StandardCharsets.US_ASCII);
+		for (int i = 0; i<bytes.length; i++) {
+			if (bytes[i] == 63) {
+				bytes[i] = 32;
+			}
+		}
+		return new String(bytes);
 	}
 }
