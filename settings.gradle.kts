@@ -14,6 +14,7 @@ include(":keyspammer")
 include(":wautotyper")
 include(":missingplayers")
 include(":autocaster")
+include(":hideattack")
 
 for (project in rootProject.children) {
     project.apply {

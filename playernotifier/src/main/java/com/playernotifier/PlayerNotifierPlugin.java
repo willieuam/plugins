@@ -28,6 +28,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import org.pf4j.Extension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 @Extension
@@ -321,7 +322,7 @@ public class PlayerNotifierPlugin extends Plugin {
 		if (friendsChatManager == null) { return false; }
 
 		for (FriendsChatMember fcm : friendsChatManager.getMembers()) {
-			if (fcm.getName().equalsIgnoreCase(player.getName())) {
+			if (correctName(fcm.getName()).equalsIgnoreCase(player.getName())) {
 				return true;
 			}
 		}
@@ -333,10 +334,20 @@ public class PlayerNotifierPlugin extends Plugin {
 		if (clanChannel == null) { return false; }
 
 		for (ClanChannelMember ccm : clanChannel.getMembers()) {
-			if (ccm.getName().equalsIgnoreCase(player.getName())) {
+			if (correctName(ccm.getName()).equalsIgnoreCase(player.getName())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private String correctName(String name) { // the fc player has the wrong char code for a space compared to the other name???
+		byte[] bytes = name.getBytes(StandardCharsets.US_ASCII);
+		for (int i = 0; i<bytes.length; i++) {
+			if (bytes[i] == 63) {
+				bytes[i] = 32;
+			}
+		}
+		return new String(bytes);
 	}
 }
