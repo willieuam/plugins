@@ -25,7 +25,6 @@ import java.util.*;
 	description = "Display missing players from CC",
 	tags = {"clan", "pvp", "cc", "friends", "chat", "fc"}
 )
-@Slf4j
 public class MissingPlayersPlugin extends Plugin
 {
 	@Inject
@@ -91,14 +90,6 @@ public class MissingPlayersPlugin extends Plugin
 		}
 
 		return missingPlayers;
-	}
-
-	private void a(String s) {
-		byte[] bytes = s.getBytes(StandardCharsets.US_ASCII);
-		log.info("s:" + s);
-		for (byte b : bytes) {
-			log.info(String.valueOf(b));
-		}
 	}
 
 	private Map<String, Integer> playersInFriendsChat() {
