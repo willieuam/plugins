@@ -50,16 +50,10 @@ public class AutoTankerPlugin extends Plugin {
 	final int PIZZA_HALF_ID = 2299;
 
 	@Override
-	protected void startUp()
-	{
-
-	}
+	protected void startUp() { }
 
 	@Override
-	protected void shutDown()
-	{
-
-	}
+	protected void shutDown() { }
 
 	@Subscribe
 	private void onGameTick(GameTick gameTick)
@@ -86,42 +80,26 @@ public class AutoTankerPlugin extends Plugin {
 		// Inventory is null or bank interface is open
 		if (inventory == null || client.getItemContainer(InventoryID.BANK) != null) { return; }
 
-
-
 		//For every item in the Inventory
 		for (WidgetItem item : inventory.getWidgetItems()) {
 			// Get item name
 			final String name = this.itemManager.getItemComposition(item.getId()).getName();
 			// Ff the item is PIZZA
 			if (name.equals(PIZZA)) {
-				// Get the menu entry to eat the pizza and invoke
-				MenuEntry entry = getConsumableEntry(name, item.getId(), item.getIndex());
 				clientThread.invoke(() ->
 						client.invokeMenuAction(
-								entry.getOption(),
-								entry.getTarget(),
-								entry.getIdentifier(),
-								entry.getType().getId(),
-								entry.getParam0(),
-								entry.getParam1()
+								"Eat",
+								"<col=ff9040>" + PIZZA_ID,
+								PIZZA_ID,
+								MenuAction.ITEM_FIRST_OPTION.getId(),
+								item.getIndex(),
+								WidgetInfo.INVENTORY.getId()
 						)
 				);
 				// Return after eating 1 pizza this tick
 				return;
 			}
 		}
-	}
-
-	private MenuEntry getConsumableEntry(String itemName, int itemId, int itemIndex) {
-		return client.createMenuEntry(
-				"Eat",
-				"<col=ff9040>" + itemName,
-				itemId,
-				MenuAction.ITEM_FIRST_OPTION.getId(),
-				itemIndex,
-				WidgetInfo.INVENTORY.getId(),
-				false
-		);
 	}
 
 	private void combinePizza() {
@@ -131,51 +109,37 @@ public class AutoTankerPlugin extends Plugin {
 		// Inventory is null or bank interface is open
 		if (inventory == null || client.getItemContainer(InventoryID.BANK) != null) { return; }
 
+		// Perform query for pizza half WidgetItems
+		QueryResults<WidgetItem> widgetItemQueryResults = new InventoryWidgetItemQuery()
+				.idEquals(PIZZA_HALF_ID)
+				.result(client);
+
+		// If Query fails or no halves are found or there is only one half
+		if (widgetItemQueryResults == null || widgetItemQueryResults.isEmpty() || widgetItemQueryResults.size() < 2) {
+			return;
+		}
+
+		// Get the first and last pizza half from the query
+		WidgetItem firstPizza = widgetItemQueryResults.first();
+		WidgetItem lastPizza = widgetItemQueryResults.last();
+
+		if (firstPizza == null || lastPizza == null) {
+			return;
+		}
+
 		clientThread.invoke(() -> {
-
-			// Perform query for pizza half WidgetItems
-			QueryResults<WidgetItem> widgetItemQueryResults = new InventoryWidgetItemQuery()
-					.idEquals(PIZZA_HALF_ID)
-					.result(client);
-
-			// If Query fails or no halves are found or there is only one half
-			if (widgetItemQueryResults == null || widgetItemQueryResults.isEmpty() || widgetItemQueryResults.size() < 2) {
-				return;
-			}
-
-			// Get the first and last pizza half from the query
-			WidgetItem firstPizza = widgetItemQueryResults.first();
-			WidgetItem lastPizza = widgetItemQueryResults.last();
-
-			if (firstPizza == null || lastPizza == null) {
-				return;
-			}
-
 			client.setSelectedItemWidget(WidgetInfo.INVENTORY.getId());
 			client.setSelectedItemSlot(firstPizza.getIndex());
 			client.setSelectedItemID(firstPizza.getId());
-			MenuEntry combineEntry = this.getCombineEntry(PIZZA_HALF, PIZZA_HALF_ID, lastPizza.getIndex());
 			client.invokeMenuAction(
-					combineEntry.getOption(),
-					combineEntry.getTarget(),
-					combineEntry.getIdentifier(),
-					combineEntry.getType().getId(),
-					combineEntry.getParam0(),
-					combineEntry.getParam1()
+					"Use",
+					"<col=ff9040>" + PIZZA_HALF + "<col=ffffff> -> <col=ff9040>" + PIZZA_HALF,
+					PIZZA_HALF_ID,
+					MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId(),
+					lastPizza.getIndex(),
+					WidgetInfo.INVENTORY.getId()
 			);
 		});
-	}
-
-	private MenuEntry getCombineEntry(String itemName, int itemId, int itemIndex) {
-		return client.createMenuEntry(
-				"Use",
-				"<col=ff9040>" + itemName + "<col=ffffff> -> <col=ff9040>" + itemName,
-				itemId,
-				MenuAction.ITEM_USE_ON_WIDGET_ITEM.getId(),
-				itemIndex,
-				WidgetInfo.INVENTORY.getId(),
-				false
-		);
 	}
 
 }
