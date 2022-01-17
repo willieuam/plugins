@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.VarClientStr;
 import net.runelite.api.events.*;
@@ -20,7 +19,7 @@ import org.pf4j.Extension;
 
 @Extension
 @PluginDescriptor(
-	name = "Auto Typer",
+	name = "[w] Auto Typer",
 	enabledByDefault = false,
 	description = "Auto types custom message(s)",
 	tags = {"spam", "key", "keypress"}

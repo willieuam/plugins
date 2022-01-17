@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.2"
+version = "1.0.3"
 
 project.extra["PluginName"] = "[w] Player Notifier"
 project.extra["PluginDescription"] = "Player Notifier"

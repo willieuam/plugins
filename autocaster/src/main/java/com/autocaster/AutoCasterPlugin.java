@@ -4,6 +4,8 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 
 import com.openosrs.client.game.SoundManager;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.clan.ClanChannel;
@@ -27,9 +29,11 @@ import net.runelite.client.game.ItemStack;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.util.HotkeyListener;
 import org.pf4j.Extension;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Extension
@@ -53,10 +57,17 @@ public class AutoCasterPlugin extends Plugin {
 	@Inject
 	private KeyManager keyManager;
 
+	@Inject
+	private ItemManager itemManager;
+
+	@Inject
+	private InfoBoxManager infoBoxManager;
+
 	// Provides our config
 	@Provides
 	AutoCasterConfig provideConfig(ConfigManager configManager) { return configManager.getConfig(AutoCasterConfig.class); }
 
+	@Getter(AccessLevel.PACKAGE)
 	private boolean enabled;
 	private String[] whitelist;
 	private Map<String, Integer> cache;
@@ -64,22 +75,34 @@ public class AutoCasterPlugin extends Plugin {
 	private int delay;
 	private static final int COMBAT_SPELL_DELAY = 5;
 
+	private AutoCasterEnabledInfoBox enabledInfoBox;
+
 	@Override
 	protected void startUp() {
 		this.updateWhiteList();
 		this.cache = new HashMap<>();
+
 		enabled = false;
 		delay = 0;
+
 		keyManager.registerKeyListener(toggleKeyBindListener);
+
+		enabledInfoBox = new AutoCasterEnabledInfoBox(itemManager.getImage(ItemID.MAGIC_STAFF), this);
+		infoBoxManager.addInfoBox(enabledInfoBox);
 	}
 
 	@Override
 	protected void shutDown() {
 		this.whitelist = null;
 		this.cache = null;
+
 		enabled = false;
 		delay = 0;
+
 		keyManager.unregisterKeyListener(toggleKeyBindListener);
+
+		infoBoxManager.removeInfoBox(enabledInfoBox);
+		enabledInfoBox = null;
 	}
 
 	private final HotkeyListener toggleKeyBindListener = new HotkeyListener(() -> config.toggleKey())
@@ -94,14 +117,15 @@ public class AutoCasterPlugin extends Plugin {
 
 	@Subscribe
 	protected void onGameTick(GameTick event) {
-		log.info("onGameTick; Delay = " + delay);
-		log.info("Cache: " + cache.toString());
-
 		tickCache();
 		delay--;
 		if (delay < 0) { delay = 0; }
 
 		if (!enabled || delay != 0) { return; }
+
+		log.info("onGameTick; Cache: " + cache.toString());
+
+		if (!isPvp()) { return; }
 
 		Player target = target();
 		log.info("Target: " + target.getName());
@@ -265,7 +289,7 @@ public class AutoCasterPlugin extends Plugin {
 		if (friendsChatManager == null) { return false; }
 
 		for (FriendsChatMember fcm : friendsChatManager.getMembers()) {
-			if (fcm.getName().equalsIgnoreCase(player.getName())) {
+			if (correctName(fcm.getName()).equalsIgnoreCase(player.getName())) {
 				return true;
 			}
 		}
@@ -277,11 +301,21 @@ public class AutoCasterPlugin extends Plugin {
 		if (clanChannel == null) { return false; }
 
 		for (ClanChannelMember ccm : clanChannel.getMembers()) {
-			if (ccm.getName().equalsIgnoreCase(player.getName())) {
+			if (correctName(ccm.getName()).equalsIgnoreCase(player.getName())) {
 				return true;
 			}
 		}
 		return false;
+	}
+
+	private String correctName(String name) { // the fc player has the wrong char code for a space compared to the other name???
+		byte[] bytes = name.getBytes(StandardCharsets.US_ASCII);
+		for (int i = 0; i<bytes.length; i++) {
+			if (bytes[i] == 63) {
+				bytes[i] = 32;
+			}
+		}
+		return new String(bytes);
 	}
 
 	@Subscribe

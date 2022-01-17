@@ -19,7 +19,7 @@ import java.util.*;
 
 @Extension
 @PluginDescriptor(
-	name = "Missing Players",
+	name = "[w] Missing Players",
 	enabledByDefault = false,
 	description = "Display missing players from CC",
 	tags = {"clan", "pvp", "cc", "friends", "chat", "fc"}

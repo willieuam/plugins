@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.queries.InventoryWidgetItemQuery;
 import net.runelite.api.widgets.Widget;
@@ -19,7 +20,7 @@ import org.pf4j.Extension;
 
 @Extension
 @PluginDescriptor(
-	name = "Auto Tanker",
+	name = "[w] Auto Tanker",
 	description = "Auto Tanker for F2P.",
 	tags = {"tank", "pizza", "f2p"},
 	enabledByDefault = false
