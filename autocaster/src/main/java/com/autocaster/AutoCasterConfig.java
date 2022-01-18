@@ -92,6 +92,18 @@ public interface AutoCasterConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "targetType",
+			name = "Target Type",
+			description = "targetType",
+			section = targetSection,
+			position = 0
+	)
+	default TargetType targetType()
+	{
+		return TargetType.RANDOM;
+	}
+
+	@ConfigItem(
 		keyName = "whiteList",
 		name = "White List",
 		description = "Names to always White List. Separate with a comma (,).",

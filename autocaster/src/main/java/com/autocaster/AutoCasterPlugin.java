@@ -36,6 +36,8 @@ import org.pf4j.Extension;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static java.lang.Math.abs;
+
 @Extension
 @PluginDescriptor(
 	name = "[w] Auto Caster",
@@ -151,8 +153,35 @@ public class AutoCasterPlugin extends Plugin {
 
 	private Player target() {
 		List<Player> targets = targets();
-		Random r = new Random();
-		return targets.get(r.nextInt(targets.size()));
+		switch (config.targetType()) {
+			case CLOSEST:
+				int closestDistance = 99999999;
+				Player closest = null;
+				Player localPlayer = client.getLocalPlayer();
+				if (localPlayer == null) { return null; }
+				for (Player p : targets) {
+					if (closest == null) {
+						closest = p;
+						continue;
+					}
+					int distance =
+							abs(localPlayer.getLocalLocation().getSceneX() - p.getLocalLocation().getSceneX()) +
+							abs(localPlayer.getLocalLocation().getSceneY() - p.getLocalLocation().getSceneY());
+					if (distance < closestDistance) {
+						closestDistance = distance;
+						closest = p;
+					}
+				}
+				return closest;
+			case RANDOM:
+			default:
+				try {
+					Random r = new Random();
+					return targets.get(r.nextInt(targets.size()));
+				} catch (Exception e) { return null; }
+		}
+
+
 	}
 
 	private String combatLevelCol(Actor target) {
@@ -208,6 +237,8 @@ public class AutoCasterPlugin extends Plugin {
 	}
 
 	private void autoAttackSpell(Player player, AutoAttack type) {
+		if (player == null) { return; }
+
 		//final int VARBIT_SPELLBOOK_HIDDEN = 6718;
 		final int VARBIT_SPELLBOOK = 4070;
 

@@ -8,6 +8,7 @@ rootProject.name = "plugins"
 //include(":infernoautopray")
 //include(":hideattack")
 //include(":wuriums")
+//include(":gauntletautopray")
 
 include(":autotanker")
 include(":playernotifier")
@@ -16,6 +17,7 @@ include(":keyspammer")
 include(":wautotyper")
 include(":missingplayers")
 include(":autocaster")
+
 
 for (project in rootProject.children) {
     project.apply {
