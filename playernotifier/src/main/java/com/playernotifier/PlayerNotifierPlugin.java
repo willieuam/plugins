@@ -76,7 +76,7 @@ public class PlayerNotifierPlugin extends Plugin {
 
 	@Subscribe
 	private void onConfigChanged(ConfigChanged event) {
-		if (!event.getGroup().equals("PlayerNotifierConfig")) { return; }
+		if (!event.getGroup().equals("playernotifier")) { return; }
 
 		updateWhiteList();
 	}
@@ -124,12 +124,6 @@ public class PlayerNotifierPlugin extends Plugin {
 			this.chatNotif(player);
 		}
 	}
-
-	//@Subscribe
-	//protected void onSoundEffectPlayed(SoundEffectPlayed event) {
-	//	if (event == null) { return; }
-	//	log.info(String.valueOf(event.getSoundId()));
-	//}
 
 	private void updateWhiteList() {
 		this.whitelist = config.whiteList().trim().split("\\s*,\\s*");

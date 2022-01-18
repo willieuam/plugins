@@ -7,8 +7,7 @@ import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 import net.runelite.client.config.ConfigSection;
 
-@ConfigGroup("PlayerNotifierConfig")
-
+@ConfigGroup("playernotifier")
 public interface PlayerNotifierConfig extends Config
 {
 	@ConfigItem(

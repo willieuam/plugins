@@ -320,7 +320,7 @@ public class AutoCasterPlugin extends Plugin {
 
 	@Subscribe
 	private void onConfigChanged(ConfigChanged event) {
-		if (!event.getGroup().equals("PlayerNotifierConfig")) { return; }
+		if (!event.getGroup().equals("autocaster")) { return; }
 
 		updateWhiteList();
 	}

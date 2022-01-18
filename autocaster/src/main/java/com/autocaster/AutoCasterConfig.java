@@ -4,8 +4,7 @@ import com.openosrs.client.game.AttackStyle;
 import net.runelite.api.SoundEffectVolume;
 import net.runelite.client.config.*;
 
-@ConfigGroup("AutoCasterConfig")
-
+@ConfigGroup("autocaster")
 public interface AutoCasterConfig extends Config
 {
 	@ConfigSection(
