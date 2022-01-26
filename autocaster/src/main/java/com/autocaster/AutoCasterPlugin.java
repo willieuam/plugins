@@ -45,7 +45,6 @@ import static java.lang.Math.abs;
 	tags = {"player", "spell", "pk", "clan", "pvp"},
 	enabledByDefault = false
 )
-@Slf4j
 public class AutoCasterPlugin extends Plugin {
 	@Inject
 	private Client client;
@@ -113,7 +112,6 @@ public class AutoCasterPlugin extends Plugin {
 		public void hotkeyPressed()
 		{
 			enabled = !enabled;
-			log.info("Toggle: " + enabled);
 		}
 	};
 
@@ -125,29 +123,23 @@ public class AutoCasterPlugin extends Plugin {
 
 		if (!enabled || delay != 0) { return; }
 
-		log.info("onGameTick; Cache: " + cache.toString());
-
-		if (!isPvp()) { return; }
-
 		Player target = target();
-		log.info("Target: " + target.getName());
 		autoAttackSpell(target, config.autoAttackType());
-		if (config.enableCache()) { addPlayerToCache(target); log.info("Cached"); }
+		if (config.enableCache() && target != null) {
+			addPlayerToCache(target);
+		}
 		delay = config.delay() == 0 ? COMBAT_SPELL_DELAY : config.delay();
 	}
 
 	private List<Player> targets() {
-		log.info("---Get Targets---");
 		List<Player> targets = new ArrayList<>();
 		for (Player p : client.getPlayers()) {
 			if (p != client.getLocalPlayer() &&
 				!playerIsWhiteListed(p) &&
 				!playerInCache(p)) {
 				targets.add(p);
-				log.info(p.getName());
 			}
 		}
-		log.info("---End Targets---");
 		return targets;
 	}
 
@@ -267,10 +259,6 @@ public class AutoCasterPlugin extends Plugin {
 				0
 			);
 		});
-	}
-
-	private boolean isPvp() {
-		return (client.getVar(Varbits.IN_WILDERNESS) == 1 || WorldType.isAllPvpWorld(client.getWorldType()));
 	}
 
 	private void addPlayerToCache(Player player) {

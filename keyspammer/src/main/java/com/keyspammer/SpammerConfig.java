@@ -119,10 +119,22 @@ public interface SpammerConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "checkTargetIsPlayer",
+			name = "Only Players",
+			description = "Check that the target for pile spam is a player.",
+			position = 3,
+			section = pileSpammerSection
+	)
+	default boolean checkTargetIsPlayer()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "pileKeybind",
 			name = "Pile Keybind",
 			description = "Configure what button to press to spam your current target",
-			position = 3,
+			position = 4,
 			section = pileSpammerSection
 	)
 	default Keybind pilekeybind()
@@ -134,7 +146,7 @@ public interface SpammerConfig extends Config
 			keyName = "autoPileSpamToggle",
 			name = "Auto Pile Spam",
 			description = "Configure what button to press to automatically spam your current target",
-			position = 4,
+			position = 5,
 			section = pileSpammerSection
 	)
 	default Keybind autoPileSpamKeybind()
@@ -146,7 +158,7 @@ public interface SpammerConfig extends Config
 			keyName = "autoPileSpamDelay",
 			name = "Auto Pile Spam Tick Delay",
 			description = "Tick delay between auto pile spam messages.",
-			position = 5,
+			position = 6,
 			section = pileSpammerSection
 	)
 	default int autoPileSpamDelay()

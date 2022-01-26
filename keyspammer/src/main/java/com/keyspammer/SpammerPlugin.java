@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
+import net.runelite.api.Player;
 import net.runelite.api.VarClientStr;
 import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
@@ -168,6 +169,11 @@ public class SpammerPlugin extends Plugin
 		if (target == null) { opponentName = ""; return; }
 		opponentName = target.getName();
 		if (opponentName == null) { opponentName = ""; return; }
+
+		if (config.checkTargetIsPlayer() && !(target instanceof Player)) { // the target is not a player, return
+			opponentName = "";
+			return;
+		}
 
 		//smallerNameSize = ;
 
