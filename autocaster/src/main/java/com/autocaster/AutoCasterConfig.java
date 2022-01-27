@@ -104,6 +104,18 @@ public interface AutoCasterConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "targetList",
+			name = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
+			description = "targetList",
+			section = targetSection,
+			position = 0
+	)
+	default String targetList()
+	{
+		return "";
+	}
+
+	@ConfigItem(
 		keyName = "whiteList",
 		name = "White List",
 		description = "Names to always White List. Separate with a comma (,).",

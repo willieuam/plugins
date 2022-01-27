@@ -71,6 +71,7 @@ public class AutoCasterPlugin extends Plugin {
 	@Getter(AccessLevel.PACKAGE)
 	private boolean enabled;
 	private String[] whitelist;
+	private String[] targetList;
 	private Map<String, Integer> cache;
 	private static final int cacheDuration = 250; // 250 ticks = 2:30
 	private int delay;
@@ -81,6 +82,7 @@ public class AutoCasterPlugin extends Plugin {
 	@Override
 	protected void startUp() {
 		this.updateWhiteList();
+		this.updateTargetList();
 		this.cache = new HashMap<>();
 
 		enabled = false;
@@ -95,6 +97,7 @@ public class AutoCasterPlugin extends Plugin {
 	@Override
 	protected void shutDown() {
 		this.whitelist = null;
+		this.targetList = null;
 		this.cache = null;
 
 		enabled = false;
@@ -145,6 +148,13 @@ public class AutoCasterPlugin extends Plugin {
 
 	private Player target() {
 		List<Player> targets = targets();
+
+		// check target list and return since that player should always be targeted first
+		Player targetFromTargetList = fromTargetList(targets);
+		if (targetFromTargetList != null) {
+			return targetFromTargetList;
+		}
+
 		switch (config.targetType()) {
 			case CLOSEST:
 				int closestDistance = 99999999;
@@ -172,8 +182,17 @@ public class AutoCasterPlugin extends Plugin {
 					return targets.get(r.nextInt(targets.size()));
 				} catch (Exception e) { return null; }
 		}
+	}
 
-
+	private Player fromTargetList(List<Player> targets) {
+		for (Player p : targets) {
+			for (String t : this.targetList) {
+				if (p.getName().equalsIgnoreCase(t)) {
+					return p;
+				}
+			}
+		}
+		return null;
 	}
 
 	private String combatLevelCol(Actor target) {
@@ -342,7 +361,10 @@ public class AutoCasterPlugin extends Plugin {
 		if (!event.getGroup().equals("autocaster")) { return; }
 
 		updateWhiteList();
+		updateTargetList();
 	}
+
+	private void updateTargetList() { this.targetList = config.targetList().trim().split("\\s*,\\s*"); }
 
 	private void updateWhiteList() {
 		this.whitelist = config.whiteList().trim().split("\\s*,\\s*");

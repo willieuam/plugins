@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.5"
+version = "1.0.6"
 
 project.extra["PluginName"] = "[w] Auto Caster"
 project.extra["PluginDescription"] = "Automatically cast spells on targets around you."
