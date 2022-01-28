@@ -108,7 +108,7 @@ public interface AutoCasterConfig extends Config
 			name = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
 			description = "targetList",
 			section = targetSection,
-			position = 0
+			position = 1
 	)
 	default String targetList()
 	{
