@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "2.0.3"
+version = "2.0.4"
 
 project.extra["PluginName"] = "Keypress Spammer"
 project.extra["PluginDescription"] = "Spams a custom message upon keypress"

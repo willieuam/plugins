@@ -8,6 +8,7 @@ rootProject.name = "plugins"
 //include(":wuriums")
 //include(":wprayflick")
 //include(":wbloods")
+//include(":wloginspammer")
 
 //include(":wautoprayutils")
 //include(":praytest")

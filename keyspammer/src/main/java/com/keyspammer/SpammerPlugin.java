@@ -20,6 +20,9 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.util.HotkeyListener;
 import org.pf4j.Extension;
 
+import java.util.Locale;
+import java.util.Random;
+
 // shoutouts to OP from ly
 
 @Extension
@@ -100,9 +103,12 @@ public class SpammerPlugin extends Plugin
 		@Override
 		public void hotkeyPressed()
 		{
-			if (!opponentName.equals(""))
-			{
-				sendMessage(config.clanPrefix() + " " + opponentName);
+			if (!opponentName.equals("")) {
+				if (config.smallerPileNames()) {
+					sendMessage(config.clanPrefix() + " " + smallerPileName(opponentName));
+				} else {
+					sendMessage(config.clanPrefix() + " " + opponentName);
+				}
 			}
 		}
 	};
@@ -167,7 +173,7 @@ public class SpammerPlugin extends Plugin
 
 		// Player interacting with nothing -> Reset Target name
 		if (target == null) { opponentName = ""; return; }
-		opponentName = target.getName();
+
 		if (opponentName == null) { opponentName = ""; return; }
 
 		if (config.checkTargetIsPlayer() && !(target instanceof Player)) { // the target is not a player, return
@@ -175,15 +181,35 @@ public class SpammerPlugin extends Plugin
 			return;
 		}
 
-		//smallerNameSize = ;
+		opponentName = target.getName();
 
-		if (opponentName.length() > 4 && config.smallerPileNames()) {
-			//hopefully will fix combined names being spammed
-			if (opponentName.substring(0,4).equalsIgnoreCase(target.getName().substring(0,4)))
-			{
-				opponentName = opponentName.substring(0,4);
-			}
+		//if (opponentName.length() > 4 && config.smallerPileNames()) {
+		//	//hopefully will fix combined names being spammed
+		//	if (opponentName.substring(0,4).equalsIgnoreCase(target.getName().substring(0,4)))
+		//	{
+		//		opponentName = opponentName.substring(0,4);
+		//	}
+		//}
+	}
+
+	private String smallerPileName(String name) {
+		boolean ignoreSpaces = Math.random() > 0.5; // occasionally, ignore spaces in a players name to seem more humanlike
+		if (ignoreSpaces) {
+			name = name.replace(" ", "");
 		}
+
+		name = name.toLowerCase(Locale.ROOT);
+
+		int nameSize = random(3, 6);
+		if (name.length() < nameSize) {
+			nameSize = name.length();
+		}
+
+		return name.substring(0, nameSize);
+	}
+
+	private int random(int min, int max) {
+		return (int) ((Math.random() * (max - min + 1)) + min);
 	}
 
 	@Subscribe
