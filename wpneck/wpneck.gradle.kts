@@ -1,9 +1,9 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.1.0"
+version = "1.0.0"
 
-project.extra["PluginName"] = "[w] Auto Caster"
-project.extra["PluginDescription"] = "Automatically cast spells on targets around you."
+project.extra["PluginName"] = "[w] Pneck"
+project.extra["PluginDescription"] = "Equip pnecks automatically"
 
 dependencies {
     annotationProcessor(Libraries.lombok)

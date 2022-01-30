@@ -109,8 +109,7 @@ public class AutoCasterPlugin extends Plugin {
 		enabledInfoBox = null;
 	}
 
-	private final HotkeyListener toggleKeyBindListener = new HotkeyListener(() -> config.toggleKey())
-	{
+	private final HotkeyListener toggleKeyBindListener = new HotkeyListener(() -> config.toggleKey()) {
 		@Override
 		public void hotkeyPressed()
 		{
@@ -127,11 +126,49 @@ public class AutoCasterPlugin extends Plugin {
 		if (!enabled || delay != 0) { return; }
 
 		Player target = target();
-		autoAttackSpell(target, config.autoAttackType());
-		if (config.enableCache() && target != null) {
-			addPlayerToCache(target);
+		AutoAttack spell = spell();
+
+		boolean casted = autoAttackSpell(target, spell);
+
+		if (casted) {
+			if (config.enableCache() && target != null) {
+				addPlayerToCache(target);
+			}
+
+			delay = config.delay() == 0 ? COMBAT_SPELL_DELAY : config.delay();
 		}
-		delay = config.delay() == 0 ? COMBAT_SPELL_DELAY : config.delay();
+	}
+
+	private AutoAttack spell() {
+		switch (config.autoAttackType()) {
+			case TB:
+				return AutoAttack.TB;
+			case SNARES:
+				if (spellAvailable(AutoAttack.ENTANGLE)) {
+					return AutoAttack.ENTANGLE;
+				}
+				if (spellAvailable(AutoAttack.SNARE)) {
+					return AutoAttack.SNARE;
+				}
+				break;
+			case SINGLE_SPELLS:
+				if (spellAvailable(AutoAttack.BLITZ)) {
+					return AutoAttack.BLITZ;
+				}
+				if (spellAvailable(AutoAttack.RUSH)) {
+					return AutoAttack.RUSH;
+				}
+				break;
+			case MULTI_SPELLS:
+				if (spellAvailable(AutoAttack.BARRAGE)) {
+					return AutoAttack.BARRAGE;
+				}
+				if (spellAvailable(AutoAttack.BURST)) {
+					return AutoAttack.BURST;
+				}
+				break;
+		}
+		return null;
 	}
 
 	private List<Player> targets() {
@@ -139,7 +176,7 @@ public class AutoCasterPlugin extends Plugin {
 		for (Player p : client.getPlayers()) {
 			if (p != client.getLocalPlayer() &&
 				!playerIsWhiteListed(p) &&
-				!playerInCache(p)) {
+				(config.enableCache() &&!playerInCache(p))) {
 				targets.add(p);
 			}
 		}
@@ -187,6 +224,7 @@ public class AutoCasterPlugin extends Plugin {
 	private Player fromTargetList(List<Player> targets) {
 		for (Player p : targets) {
 			for (String t : this.targetList) {
+				if (p.getName() == null) { continue; }
 				if (p.getName().equalsIgnoreCase(t)) {
 					return p;
 				}
@@ -247,28 +285,33 @@ public class AutoCasterPlugin extends Plugin {
 		}
 	}
 
-	private void autoAttackSpell(Player player, AutoAttack type) {
-		if (player == null) { return; }
-
-		//final int VARBIT_SPELLBOOK_HIDDEN = 6718;
+	private boolean spellAvailable(AutoAttack type) {
 		final int VARBIT_SPELLBOOK = 4070;
 
 		final Widget widget = client.getWidget(type.getWidgetInfo());
 		if (widget == null) {
-			return;
+			return false;
 		}
 
 		if (client.getVarbitValue(VARBIT_SPELLBOOK) != type.getSpellbook() ||
 				widget.getSpriteId() == type.getDisabledSpriteId() ||
 				widget.getSpriteId() != type.getEnabledSpriteId()) {
-			return;
+			return false;
 		}
 
-		this.clientThread.invoke(() -> {
-			client.setSelectedSpellName("<col=00ff00>" + widget.getName() + "</col>");
-			client.setSelectedSpellWidget(widget.getId());
-			client.setSelectedSpellChildIndex(-1);
+		return true;
+	}
 
+	private boolean autoAttackSpell(Player player, AutoAttack type) {
+		if (player == null || type == null) { return false; }
+
+		final Widget spell = client.getWidget(type.getWidgetInfo());
+		if (spell == null) { return false; }
+
+		this.clientThread.invoke(() -> {
+			client.setSelectedSpellName("<col=00ff00>" + spell.getName() + "</col>");
+			client.setSelectedSpellWidget(spell.getId());
+			client.setSelectedSpellChildIndex(-1);
 			client.invokeMenuAction(
 				"Cast",
 				"<col=00ff00>" + type.getName() + "<col=ffffff> -> <col=ffffff>" + player.getName() + "<col=" + this.combatLevelCol(player) + "> (level-" + player.getCombatLevel() + ")",
@@ -278,6 +321,8 @@ public class AutoCasterPlugin extends Plugin {
 				0
 			);
 		});
+
+		return true;
 	}
 
 	private void addPlayerToCache(Player player) {
@@ -366,7 +411,5 @@ public class AutoCasterPlugin extends Plugin {
 
 	private void updateTargetList() { this.targetList = config.targetList().trim().split("\\s*,\\s*"); }
 
-	private void updateWhiteList() {
-		this.whitelist = config.whiteList().trim().split("\\s*,\\s*");
-	}
+	private void updateWhiteList() { this.whitelist = config.whiteList().trim().split("\\s*,\\s*"); }
 }

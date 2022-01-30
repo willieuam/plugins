@@ -38,9 +38,9 @@ public interface AutoCasterConfig extends Config
 			section = generalSection,
 			position = 0
 	)
-	default AutoAttack autoAttackType()
+	default AutoCasterType autoAttackType()
 	{
-		return AutoAttack.TB;
+		return AutoCasterType.TB;
 	}
 
 	@ConfigItem(
@@ -105,8 +105,8 @@ public interface AutoCasterConfig extends Config
 
 	@ConfigItem(
 			keyName = "targetList",
-			name = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
-			description = "targetList",
+			name = "Target List",
+			description = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
 			section = targetSection,
 			position = 1
 	)

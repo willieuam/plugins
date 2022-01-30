@@ -10,6 +10,7 @@ rootProject.name = "plugins"
 //include(":wbloods")
 //include(":wloginspammer")
 
+
 //include(":wautoprayutils")
 //include(":praytest")
 //include(":gauntletautopray")
@@ -24,6 +25,7 @@ include(":keyspammer")
 include(":wautotyper")
 include(":missingplayers")
 include(":autocaster")
+include(":wpneck")
 
 for (project in rootProject.children) {
     project.apply {
