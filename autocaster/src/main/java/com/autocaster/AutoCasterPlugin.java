@@ -45,6 +45,7 @@ import static java.lang.Math.abs;
 	tags = {"player", "spell", "pk", "clan", "pvp"},
 	enabledByDefault = false
 )
+@Slf4j
 public class AutoCasterPlugin extends Plugin {
 	@Inject
 	private Client client;
@@ -176,7 +177,7 @@ public class AutoCasterPlugin extends Plugin {
 		for (Player p : client.getPlayers()) {
 			if (p != client.getLocalPlayer() &&
 				!playerIsWhiteListed(p) &&
-				(config.enableCache() &&!playerInCache(p))) {
+				!playerInCache(p)) {
 				targets.add(p);
 			}
 		}
@@ -197,15 +198,21 @@ public class AutoCasterPlugin extends Plugin {
 				int closestDistance = 99999999;
 				Player closest = null;
 				Player localPlayer = client.getLocalPlayer();
+
 				if (localPlayer == null) { return null; }
+
 				for (Player p : targets) {
+					int distance =
+							abs(localPlayer.getLocalLocation().getSceneX() - p.getLocalLocation().getSceneX()) +
+									abs(localPlayer.getLocalLocation().getSceneY() - p.getLocalLocation().getSceneY());
+					if (distance == 0) { continue; } // ingore dded players incase frozen
+
 					if (closest == null) {
+						closestDistance = distance;
 						closest = p;
 						continue;
 					}
-					int distance =
-							abs(localPlayer.getLocalLocation().getSceneX() - p.getLocalLocation().getSceneX()) +
-							abs(localPlayer.getLocalLocation().getSceneY() - p.getLocalLocation().getSceneY());
+
 					if (distance < closestDistance) {
 						closestDistance = distance;
 						closest = p;
@@ -289,7 +296,7 @@ public class AutoCasterPlugin extends Plugin {
 		final int VARBIT_SPELLBOOK = 4070;
 
 		final Widget widget = client.getWidget(type.getWidgetInfo());
-		if (widget == null) {
+		if (widget == null) { ;
 			return false;
 		}
 
@@ -298,7 +305,6 @@ public class AutoCasterPlugin extends Plugin {
 				widget.getSpriteId() != type.getEnabledSpriteId()) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -307,7 +313,6 @@ public class AutoCasterPlugin extends Plugin {
 
 		final Widget spell = client.getWidget(type.getWidgetInfo());
 		if (spell == null) { return false; }
-
 		this.clientThread.invoke(() -> {
 			client.setSelectedSpellName("<col=00ff00>" + spell.getName() + "</col>");
 			client.setSelectedSpellWidget(spell.getId());
@@ -330,7 +335,7 @@ public class AutoCasterPlugin extends Plugin {
 	}
 
 	private boolean playerInCache(Player player) {
-		return cache.containsKey(Objects.requireNonNull(player.getName()).toLowerCase());
+		return config.enableCache() && cache.containsKey(Objects.requireNonNull(player.getName()).toLowerCase());
 	}
 
 	private void tickCache() {

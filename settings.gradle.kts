@@ -10,13 +10,15 @@ rootProject.name = "plugins"
 //include(":wbloods")
 //include(":wloginspammer")
 
-
 //include(":wautoprayutils")
 //include(":praytest")
 //include(":gauntletautopray")
 //include(":hydraautopray")
 //include(":nightmareautopray")
 //include(":infernoautopray")
+
+//include(":winvoker")
+//include(":wraturn")
 
 include(":autotanker")
 include(":playernotifier")
