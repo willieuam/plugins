@@ -45,7 +45,6 @@ import static java.lang.Math.abs;
 	tags = {"player", "spell", "pk", "clan", "pvp"},
 	enabledByDefault = false
 )
-@Slf4j
 public class AutoCasterPlugin extends Plugin {
 	@Inject
 	private Client client;
@@ -187,10 +186,12 @@ public class AutoCasterPlugin extends Plugin {
 	private Player target() {
 		List<Player> targets = targets();
 
-		// check target list and return since that player should always be targeted first
-		Player targetFromTargetList = fromTargetList(targets);
-		if (targetFromTargetList != null) {
-			return targetFromTargetList;
+		if (config.enableTargetList()) {
+			// check target list and return since that player should always be targeted first
+			Player targetFromTargetList = fromTargetList(targets);
+			if (targetFromTargetList != null) {
+				return targetFromTargetList;
+			}
 		}
 
 		switch (config.targetType()) {

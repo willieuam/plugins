@@ -104,11 +104,25 @@ public interface AutoCasterConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "enableTargetList",
+			name = "Use Target List",
+			description = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
+			section = targetSection,
+			position = 1
+	)
+	default boolean enableTargetList()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "targetList",
 			name = "Target List",
 			description = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
 			section = targetSection,
-			position = 1
+			position = 2,
+			hidden = true,
+			unhide = "enableTargetList"
 	)
 	default String targetList()
 	{
