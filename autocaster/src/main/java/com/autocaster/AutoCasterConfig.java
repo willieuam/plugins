@@ -68,27 +68,27 @@ public interface AutoCasterConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "enableCache",
-			name = "Cache",
-			description = "Save people you previously casted a spell on, and dont target them for a time\n A good use case would be TB'ing in a fight.",
+			keyName = "castKey",
+			name = "Cast",
+			description = "Keybind to cast. Can use this in place of auto casting on cooldown.",
 			section = generalSection,
 			position = 3
 	)
-	default boolean enableCache()
+	default Keybind castKey()
 	{
-		return false;
+		return Keybind.NOT_SET;
 	}
 
 	@ConfigItem(
-			keyName = "cacheDuration",
-			name = "Cache Time",
-			description = "Time (in game ticks) to save players in cache. If 0, the default is 250 ticks.",
+			keyName = "enableRecast",
+			name = "Recast",
+			description = "When auto casting, should a spell be re-cast on the tick if you do an action to interrupt it. For example, drinking a restore after auto casting will cancel your cast. Enabling this will then cast again after you drink the restore.",
 			section = generalSection,
 			position = 4
 	)
-	default int cacheDuration()
+	default boolean enableRecast()
 	{
-		return 0;
+		return true;
 	}
 
 	@ConfigItem(
@@ -127,6 +127,32 @@ public interface AutoCasterConfig extends Config
 	default String targetList()
 	{
 		return "";
+	}
+
+	@ConfigItem(
+			keyName = "enableCache",
+			name = "Cache",
+			description = "Save people you previously casted a spell on, and dont target them for a time\n A good use case would be TB'ing in a fight.",
+			section = targetSection,
+			position = 3
+	)
+	default boolean enableCache()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "cacheDuration",
+			name = "Cache Time",
+			description = "Time (in game ticks) to save players in cache. If 0, the default is 250 ticks.",
+			section = targetSection,
+			position = 4,
+			hidden = true,
+			unhide = "enableCache"
+	)
+	default int cacheDuration()
+	{
+		return 0;
 	}
 
 	@ConfigItem(

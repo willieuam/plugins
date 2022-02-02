@@ -70,6 +70,8 @@ public class AutoCasterPlugin extends Plugin {
 
 	@Getter(AccessLevel.PACKAGE)
 	private boolean enabled;
+	private boolean isCastTick;
+	private boolean isWalkTick;
 	private String[] whitelist;
 	private String[] targetList;
 	private Map<String, Integer> cache;
@@ -86,9 +88,12 @@ public class AutoCasterPlugin extends Plugin {
 		this.cache = new HashMap<>();
 
 		enabled = false;
+		isCastTick = false;
+		isWalkTick = false;
 		delay = 0;
 
 		keyManager.registerKeyListener(toggleKeyBindListener);
+		keyManager.registerKeyListener(castKeyBindListener);
 
 		enabledInfoBox = new AutoCasterEnabledInfoBox(itemManager.getImage(ItemID.MAGIC_STAFF), this);
 		infoBoxManager.addInfoBox(enabledInfoBox);
@@ -101,9 +106,12 @@ public class AutoCasterPlugin extends Plugin {
 		this.cache = null;
 
 		enabled = false;
+		isCastTick = false;
+		isWalkTick = false;
 		delay = 0;
 
 		keyManager.unregisterKeyListener(toggleKeyBindListener);
+		keyManager.unregisterKeyListener(castKeyBindListener);
 
 		infoBoxManager.removeInfoBox(enabledInfoBox);
 		enabledInfoBox = null;
@@ -117,14 +125,15 @@ public class AutoCasterPlugin extends Plugin {
 		}
 	};
 
-	@Subscribe
-	protected void onGameTick(GameTick event) {
-		tickCache();
-		delay--;
-		if (delay < 0) { delay = 0; }
+	private final HotkeyListener castKeyBindListener = new HotkeyListener(() -> config.castKey()) {
+		@Override
+		public void hotkeyPressed()
+		{
+			cast();
+		}
+	};
 
-		if (!enabled || delay != 0) { return; }
-
+	private boolean cast() {
 		Player target = target();
 		AutoAttack spell = spell();
 
@@ -134,9 +143,56 @@ public class AutoCasterPlugin extends Plugin {
 			if (config.enableCache() && target != null) {
 				addPlayerToCache(target);
 			}
+		}
 
+		return casted;
+	}
+
+	@Subscribe
+	protected void onGameTick(GameTick event) {
+		isCastTick = false;
+		isWalkTick = false;
+
+		tickCache();
+		delay--;
+		if (delay < 0) { delay = 0; }
+
+		if (!enabled || delay != 0) { return; }
+
+		boolean casted = cast();
+		isCastTick = casted;
+
+		if (casted) {
 			delay = config.delay() == 0 ? COMBAT_SPELL_DELAY : config.delay();
 		}
+	}
+
+	@Subscribe
+	protected void onMenuOptionClicked(MenuOptionClicked event) {
+		if (event == null) { return; }
+		if (!config.enableRecast()) { return; }
+
+		// if we casted on this tick, and the action is interrupted by anything thats not walking, recast
+		// if we walk at any point in a tick, we dont recast on that tick again as its implied we want the walk to be the action
+
+		//isCastTick = false;
+
+		if (!isCastTick) {
+			return;
+		}
+
+		delay = 0;
+
+		//if (event.getMenuOption().equals("Walk here")) {
+		//	isWalkTick = true;
+		//	delay = 0; // reset delay as we did not actually cast on this tick due to moving instead
+		//}
+		//
+		//if (isWalkTick) {
+		//	return;
+		//}
+		//
+		//cast();
 	}
 
 	private AutoAttack spell() {
@@ -295,6 +351,10 @@ public class AutoCasterPlugin extends Plugin {
 
 	private boolean spellAvailable(AutoAttack type) {
 		final int VARBIT_SPELLBOOK = 4070;
+
+		if (type.getLevel() > client.getBoostedSkillLevel(Skill.MAGIC)) { // magic level too low to cast
+			return false;
+		}
 
 		final Widget widget = client.getWidget(type.getWidgetInfo());
 		if (widget == null) { ;
