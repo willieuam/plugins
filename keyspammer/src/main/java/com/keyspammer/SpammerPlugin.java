@@ -101,15 +101,8 @@ public class SpammerPlugin extends Plugin
 	private final HotkeyListener pilehotkeyListener = new HotkeyListener(() -> config.pilekeybind())
 	{
 		@Override
-		public void hotkeyPressed()
-		{
-			if (!opponentName.equals("")) {
-				if (config.smallerPileNames()) {
-					sendMessage(config.clanPrefix() + " " + smallerPileName(opponentName));
-				} else {
-					sendMessage(config.clanPrefix() + " " + opponentName);
-				}
-			}
+		public void hotkeyPressed() {
+			pileSpam();
 		}
 	};
 
@@ -156,6 +149,16 @@ public class SpammerPlugin extends Plugin
 
 		autoSpam = false;
 		autoSpamDelay = 0;
+	}
+
+	private void pileSpam() {
+		if (!opponentName.equals("")) {
+			if (config.smallerPileNames()) {
+				sendMessage(config.clanPrefix() + " " + smallerPileName(opponentName));
+			} else {
+				sendMessage(config.clanPrefix() + " " + opponentName);
+			}
+		}
 	}
 
 	@Subscribe
@@ -229,7 +232,7 @@ public class SpammerPlugin extends Plugin
 
 		//log.info("autoSpamDelay:" + autoSpamDelay);
 		if (autoSpam && autoSpamDelay <= 0 && !opponentName.equals("")) {
-			sendMessage(config.clanPrefix() + " " + opponentName);
+			pileSpam();
 			autoSpamDelay += config.autoPileSpamDelay();
 		}
 	}
