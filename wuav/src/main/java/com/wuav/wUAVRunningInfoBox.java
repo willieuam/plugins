@@ -1,15 +1,15 @@
-package com.autocaster;
+package com.wuav;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import net.runelite.client.ui.overlay.infobox.InfoBox;
 import net.runelite.client.ui.overlay.infobox.InfoBoxPriority;
 
-class AutoCasterEnabledInfoBox extends InfoBox
+class wUAVRunningInfoBox extends InfoBox
 {
-    AutoCasterPlugin plugin;
+    private final wUAVPlugin plugin;
 
-    AutoCasterEnabledInfoBox(final BufferedImage image, final AutoCasterPlugin plugin)
+    wUAVRunningInfoBox(final BufferedImage image, final wUAVPlugin plugin)
     {
         super(image, plugin);
         this.plugin = plugin;
@@ -19,19 +19,19 @@ class AutoCasterEnabledInfoBox extends InfoBox
     @Override
     public String getText()
     {
-        return this.plugin.isEnabled() ? "ON" : "OFF";
+        return plugin.getPlayers() == null ? "-1" : String.valueOf(plugin.getPlayers().size());
     }
 
     @Override
     public Color getTextColor()
     {
-        return this.plugin.isEnabled() ? Color.GREEN : Color.RED;
+        return Color.WHITE;
     }
 
     @Override
     public boolean render()
     {
-        return plugin.getConfig().showEnabledInfoBox();
+        return plugin.isRunning();
     }
 
     @Override

@@ -28,6 +28,7 @@ include(":wautotyper")
 include(":missingplayers")
 include(":autocaster")
 include(":wpneck")
+include(":wuav")
 
 for (project in rootProject.children) {
     project.apply {

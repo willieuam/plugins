@@ -1,9 +1,9 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.1.4"
+version = "1.0.0"
 
-project.extra["PluginName"] = "[w] Auto Caster"
-project.extra["PluginDescription"] = "Automatically cast spells on targets around you."
+project.extra["PluginName"] = "[w] UAV"
+project.extra["PluginDescription"] = "Log players in game and in CC. Logs are stored in the .openosrs/uavlogs folder."
 
 dependencies {
     annotationProcessor(Libraries.lombok)
@@ -17,6 +17,7 @@ dependencies {
     compileOnly(Libraries.lombok)
     compileOnly(Libraries.pf4j)
 }
+
 
 tasks {
     jar {

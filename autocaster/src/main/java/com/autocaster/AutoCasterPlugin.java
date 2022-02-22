@@ -49,6 +49,7 @@ public class AutoCasterPlugin extends Plugin {
 	@Inject
 	private Client client;
 
+	@Getter(AccessLevel.PACKAGE)
 	@Inject
 	private AutoCasterConfig config;
 
@@ -198,8 +199,16 @@ public class AutoCasterPlugin extends Plugin {
 	private AutoAttack spell() {
 		switch (config.autoAttackType()) {
 			case TB:
-				return AutoAttack.TB;
-			case SNARES:
+				if (spellAvailable(AutoAttack.TB)) {
+					return AutoAttack.TB;
+				}
+				break;
+			case SNARES_F2P:
+				if (spellAvailable(AutoAttack.SNARE)) {
+					return AutoAttack.SNARE;
+				}
+				break;
+			case SNARES_P2P:
 				if (spellAvailable(AutoAttack.ENTANGLE)) {
 					return AutoAttack.ENTANGLE;
 				}
@@ -289,7 +298,7 @@ public class AutoCasterPlugin extends Plugin {
 		for (Player p : targets) {
 			for (String t : this.targetList) {
 				if (p.getName() == null) { continue; }
-				if (p.getName().equalsIgnoreCase(t)) {
+				if (p.getName().equalsIgnoreCase(t) && !playerInCache(p)) {
 					return p;
 				}
 			}

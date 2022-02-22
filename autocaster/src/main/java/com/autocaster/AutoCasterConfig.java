@@ -32,11 +32,23 @@ public interface AutoCasterConfig extends Config
 	String whitelistSection = "whitelistSection";
 
 	@ConfigItem(
+			keyName = "showEnabledInfoBox",
+			name = "Show Infobox",
+			description = "Should the infobox showing the enabled status be shown. Turn this off to hide the plugin from screenshots or recording.",
+			section = generalSection,
+			position = 0
+	)
+	default boolean showEnabledInfoBox()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "autoAttackType",
 			name = "Attack Type",
 			description = "Type of attack to do on players. If the chosen option is unavailable, its not performed (e.g. missing runes or wrong spellbook)",
 			section = generalSection,
-			position = 0
+			position = 1
 	)
 	default AutoCasterType autoAttackType()
 	{
@@ -48,7 +60,7 @@ public interface AutoCasterConfig extends Config
 			name = "Delay",
 			description = "Set delay between attacks. If 0, delay is 5 ticks (time between combat spell casts)",
 			section = generalSection,
-			position = 1
+			position = 2
 	)
 	default int delay()
 	{
@@ -60,7 +72,7 @@ public interface AutoCasterConfig extends Config
 			name = "Toggle",
 			description = "Keybind to enable/disable auto spell casting",
 			section = generalSection,
-			position = 2
+			position = 3
 	)
 	default Keybind toggleKey()
 	{
@@ -72,7 +84,7 @@ public interface AutoCasterConfig extends Config
 			name = "Cast",
 			description = "Keybind to cast. Can use this in place of auto casting on cooldown.",
 			section = generalSection,
-			position = 3
+			position = 4
 	)
 	default Keybind castKey()
 	{
@@ -84,7 +96,8 @@ public interface AutoCasterConfig extends Config
 			name = "Recast",
 			description = "When auto casting, should a spell be re-cast on the tick if you do an action to interrupt it. For example, drinking a restore after auto casting will cancel your cast. Enabling this will then cast again after you drink the restore.",
 			section = generalSection,
-			position = 4
+			position = 5,
+			hidden = true
 	)
 	default boolean enableRecast()
 	{
@@ -106,7 +119,7 @@ public interface AutoCasterConfig extends Config
 	@ConfigItem(
 			keyName = "enableTargetList",
 			name = "Use Target List",
-			description = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
+			description = "Enable prioritizing specific players above all others. Kind of like a snipe list.",
 			section = targetSection,
 			position = 1
 	)
@@ -118,7 +131,7 @@ public interface AutoCasterConfig extends Config
 	@ConfigItem(
 			keyName = "targetList",
 			name = "Target List",
-			description = "Prioritize casting on these player names, seperated by comma and in order of importance. \nLeave blank to disable.",
+			description = "Prioritize casting on these player names, seperated by comma and in order of importance. If cache is enabled, cached players from this list are skipped.",
 			section = targetSection,
 			position = 2,
 			hidden = true,
