@@ -31,7 +31,6 @@ replay_pid*
 /infernoautopray/
 /wautoprayutils/
 /praytest/
-/hideattack/
 /wuriums/
 /gauntletautopray/
 /wbloods/
@@ -40,5 +39,6 @@ replay_pid*
 /wprayflick/
 /winvoker/
 /wraturn/
+/wreturntimer/
 
 /release_private/

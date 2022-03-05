@@ -34,7 +34,7 @@ import java.util.*;
 @PluginDescriptor(
 	name = "[w] UAV",
 	enabledByDefault = false,
-	description = "Log players in game and in CC",
+	description = "Log players in game and in CC. Logs are stored in the .openosrs/uavlogs folder.",
 	tags = {"clan", "pvp", "cc", "friends", "chat", "fc"}
 )
 public class wUAVPlugin extends Plugin

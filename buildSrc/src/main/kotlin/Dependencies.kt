@@ -12,8 +12,10 @@ object Libraries {
         const val slf4j = "1.7.30"
         const val apacheCommonsText = "1.9"
         const val rxjava = "3.0.7"
+        const val apacheCommonsLang = "3.8.1"
     }
 
+    const val apacheCommonsLang = "org.apache.commons:commons-lang3:${Versions.apacheCommonsLang}"
     const val guice = "com.google.inject:guice:${Versions.guice}:no_aop"
     const val javax = "javax.annotation:javax.annotation-api:${Versions.javax}"
     const val lombok = "org.projectlombok:lombok:${Versions.lombok}"

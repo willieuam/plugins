@@ -4,11 +4,11 @@ rootProject.name = "plugins"
 //include(":alchtools")
 //include(":playerindicatorssnipelist")
 //include(":waerialfishing")
-//include(":hideattack")
 //include(":wuriums")
 //include(":wprayflick")
 //include(":wbloods")
 //include(":wloginspammer")
+//include(":wreturntimer")
 
 //include(":wautoprayutils")
 //include(":praytest")
@@ -29,6 +29,7 @@ include(":missingplayers")
 include(":autocaster")
 include(":wpneck")
 include(":wuav")
+include(":hideattack")
 
 for (project in rootProject.children) {
     project.apply {
