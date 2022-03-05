@@ -2,7 +2,6 @@ rootProject.name = "plugins"
 
 //include(":bankskiller")
 //include(":alchtools")
-//include(":playerindicatorssnipelist")
 //include(":waerialfishing")
 //include(":wuriums")
 //include(":wprayflick")
@@ -30,6 +29,7 @@ include(":autocaster")
 include(":wpneck")
 include(":wuav")
 include(":hideattack")
+include(":playerindicatorssnipelist")
 
 for (project in rootProject.children) {
     project.apply {
