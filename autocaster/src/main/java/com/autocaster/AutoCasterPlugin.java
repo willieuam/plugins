@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 
 import com.openosrs.client.game.SoundManager;
+import com.openosrs.client.util.PvPUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -141,7 +142,7 @@ public class AutoCasterPlugin extends Plugin {
 		boolean casted = autoAttackSpell(target, spell);
 
 		if (casted) {
-			if (config.enableCache() && target != null) {
+			if (config.enableCache()) {
 				addPlayerToCache(target);
 			}
 		}
@@ -241,8 +242,9 @@ public class AutoCasterPlugin extends Plugin {
 		for (Player p : client.getPlayers()) {
 			if (p != client.getLocalPlayer() &&
 				!playerIsWhiteListed(p) &&
-				!playerInCache(p)) {
-				targets.add(p);
+				!playerInCache(p) &&
+				(!config.checkLevelRange() || PvPUtil.isAttackable(client, p))) {
+						targets.add(p);
 			}
 		}
 		return targets;

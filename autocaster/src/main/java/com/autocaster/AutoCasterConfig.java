@@ -92,11 +92,24 @@ public interface AutoCasterConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "checkLevelRange",
+			name = "Check level range Pv",
+			description = "Should targets not in your level range be ignored.",
+			section = generalSection,
+			position = 5,
+			hidden = true
+	)
+	default boolean checkLevelRange()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "enableRecast",
 			name = "Recast",
 			description = "When auto casting, should a spell be re-cast on the tick if you do an action to interrupt it. For example, drinking a restore after auto casting will cancel your cast. Enabling this will then cast again after you drink the restore.",
 			section = generalSection,
-			position = 5,
+			position = 6,
 			hidden = true
 	)
 	default boolean enableRecast()

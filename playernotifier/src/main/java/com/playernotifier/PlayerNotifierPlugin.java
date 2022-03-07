@@ -4,6 +4,7 @@ import com.google.inject.Provides;
 import javax.inject.Inject;
 
 import com.openosrs.client.game.SoundManager;
+import com.openosrs.client.util.PvPUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.clan.ClanChannel;
@@ -95,7 +96,7 @@ public class PlayerNotifierPlugin extends Plugin {
 		//final String playerName = player.getName();
 
 		// Set to only activate in PvP, and not currently in PvP
-		if (config.onlyPvp() && !this.isPvp()) { return; }
+		if (config.onlyPvp() && !this.isPvpViable(player)) { return; }
 
 		// If player is whitelisted, return
 		if (playerIsWhiteListed(player)) { return; }
@@ -106,7 +107,7 @@ public class PlayerNotifierPlugin extends Plugin {
 			this.autoLog();
 		}
 
-		if (config.autoAttack() && this.isPvp()) { // Only attack in pvp, avoids maybe sending attack packet where its not possible
+		if (config.autoAttack() && this.isPvpViable(player)) {
 			this.autoAttack(player, config.autoAttackType());
 		}
 
@@ -280,8 +281,9 @@ public class PlayerNotifierPlugin extends Plugin {
 		});
 	}
 
-	private boolean isPvp() {
-		return (client.getVar(Varbits.IN_WILDERNESS) == 1 || WorldType.isAllPvpWorld(client.getWorldType()));
+	private boolean isPvpViable(Player player) {
+		return PvPUtil.isAttackable(client, player);
+		//return (client.getVar(Varbits.IN_WILDERNESS) == 1 || WorldType.isAllPvpWorld(client.getWorldType()));
 	}
 
 	private boolean playerIsWhiteListed(Player player) {

@@ -13,7 +13,7 @@ public interface PlayerNotifierConfig extends Config
 	@ConfigItem(
 			keyName = "onlyPvp",
 			name = "Only Notify in PvP",
-			description = "Only notify in PvP enabled zones (PvP worlds, Wilderness).",
+			description = "Only notify in PvP enabled zones (PvP worlds, Wilderness), and if the player is in your level range.",
 			position = 0
 	)
 	default boolean onlyPvp()
