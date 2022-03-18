@@ -74,12 +74,16 @@ public class AutoCasterPlugin extends Plugin {
 	private boolean enabled;
 	private boolean isCastTick;
 	private boolean isWalkTick;
+	private boolean isSecondCastTick;
+	private Player previousTarget;
 	private String[] whitelist;
 	private String[] targetList;
 	private Map<String, Integer> cache;
-	private static final int cacheDuration = 250; // 250 ticks = 2:30
 	private int delay;
+	private static final int cacheDuration = 250; // 250 ticks = 2:30
 	private static final int COMBAT_SPELL_DELAY = 5;
+
+	private static final int CLAN_WARS_WIDGET = 5767170; // clan wars score widget
 
 	private AutoCasterEnabledInfoBox enabledInfoBox;
 
@@ -92,7 +96,10 @@ public class AutoCasterPlugin extends Plugin {
 		enabled = false;
 		isCastTick = false;
 		isWalkTick = false;
+		isSecondCastTick = false;
 		delay = 0;
+
+		previousTarget = null;
 
 		keyManager.registerKeyListener(toggleKeyBindListener);
 		keyManager.registerKeyListener(castKeyBindListener);
@@ -110,7 +117,10 @@ public class AutoCasterPlugin extends Plugin {
 		enabled = false;
 		isCastTick = false;
 		isWalkTick = false;
+		isSecondCastTick = false;
 		delay = 0;
+
+		previousTarget = null;
 
 		keyManager.unregisterKeyListener(toggleKeyBindListener);
 		keyManager.unregisterKeyListener(castKeyBindListener);
@@ -137,7 +147,7 @@ public class AutoCasterPlugin extends Plugin {
 
 	private boolean cast() {
 		Player target = target();
-		AutoAttack spell = spell();
+		AutoAttack spell = spellFirst();
 
 		boolean casted = autoAttackSpell(target, spell);
 
@@ -145,15 +155,29 @@ public class AutoCasterPlugin extends Plugin {
 			if (config.enableCache()) {
 				addPlayerToCache(target);
 			}
+			if (config.enableSecond() && !isSecondCastTick) {
+				isSecondCastTick = true;
+				previousTarget = target;
+			}
 		}
 
 		return casted;
 	}
 
+	private void castSecond(Player target) {
+		AutoAttack spell = spellSecond();
+
+		autoAttackSpell(target, spell);
+
+		isSecondCastTick = false;
+		previousTarget = null;
+	}
+
 	@Subscribe
 	protected void onGameTick(GameTick event) {
-		isCastTick = false;
-		isWalkTick = false;
+		if (isSecondCastTick) {
+			castSecond(previousTarget);
+		}
 
 		tickCache();
 		delay--;
@@ -172,18 +196,19 @@ public class AutoCasterPlugin extends Plugin {
 	@Subscribe
 	protected void onMenuOptionClicked(MenuOptionClicked event) {
 		if (event == null) { return; }
-		if (!config.enableRecast()) { return; }
+
+		//if (!config.enableRecast()) { return; }
 
 		// if we casted on this tick, and the action is interrupted by anything thats not walking, recast
 		// if we walk at any point in a tick, we dont recast on that tick again as its implied we want the walk to be the action
 
 		//isCastTick = false;
 
-		if (!isCastTick) {
-			return;
-		}
-
-		delay = 0;
+		//if (!isCastTick) {
+		//	return;
+		//}
+		//
+		//delay = 0;
 
 		//if (event.getMenuOption().equals("Walk here")) {
 		//	isWalkTick = true;
@@ -197,8 +222,16 @@ public class AutoCasterPlugin extends Plugin {
 		//cast();
 	}
 
-	private AutoAttack spell() {
-		switch (config.autoAttackType()) {
+	private AutoAttack spellFirst() {
+		return spell(config.autoAttackType());
+	}
+
+	private AutoAttack spellSecond() {
+		return spell(config.autoAttackTypeSecond());
+	}
+
+	private AutoAttack spell(AutoCasterType type) {
+		switch (type) {
 			case TB:
 				if (spellAvailable(AutoAttack.TB)) {
 					return AutoAttack.TB;
@@ -243,7 +276,7 @@ public class AutoCasterPlugin extends Plugin {
 			if (p != client.getLocalPlayer() &&
 				!playerIsWhiteListed(p) &&
 				!playerInCache(p) &&
-				(!config.checkLevelRange() || PvPUtil.isAttackable(client, p))) {
+				(!config.checkLevelRange() || PvPUtil.isAttackable(client, p) || inClanWarsArena())) {
 						targets.add(p);
 			}
 		}
@@ -400,6 +433,12 @@ public class AutoCasterPlugin extends Plugin {
 		});
 
 		return true;
+	}
+
+	private boolean inClanWarsArena() {
+		final Widget clanWarsWidget = client.getWidget(CLAN_WARS_WIDGET);
+
+		return clanWarsWidget != null && !clanWarsWidget.isHidden();
 	}
 
 	private void addPlayerToCache(Player player) {
