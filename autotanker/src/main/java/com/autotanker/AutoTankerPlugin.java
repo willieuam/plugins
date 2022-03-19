@@ -95,8 +95,8 @@ public class AutoTankerPlugin extends Plugin {
 	@Subscribe
 	private void onGameTick(GameTick gameTick)
 	{
-		if (config.onlyF2P() && !isF2P()) { return; }
-		if (config.onlyCWA() && !isCWA()) { return; }
+		//if (config.onlyF2P() && !isF2P()) { return; }
+		//if (config.onlyCWA() && !isCWA()) { return; }
 
 		final String selectedName = client.getSelectedSpellName();
 		final int selectedWidget = client.getSelectedSpellWidget();
@@ -115,14 +115,14 @@ public class AutoTankerPlugin extends Plugin {
 			this.swapPrayer();
 		}
 
-		if (isSelected) { // there was a spell selected
-			clientThread.invoke(() -> {
-				client.setSelectedSpellWidget(selectedWidget); // reselect the spell after doing this ticks actions
-				client.setSelectedSpellChildIndex(selectedChild);
-				client.setSelectedSpellName(selectedName);
-				client.setSpellSelected(true);
-			});
-		}
+		//if (isSelected) { // there was a spell selected
+		//	clientThread.invoke(() -> {
+		//		client.setSelectedSpellWidget(selectedWidget); // reselect the spell after doing this ticks actions
+		//		client.setSelectedSpellChildIndex(selectedChild);
+		//		client.setSelectedSpellName(selectedName);
+		//		client.setSpellSelected(true);
+		//	});
+		//}
 
 	}
 
