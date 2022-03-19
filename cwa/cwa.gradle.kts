@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.1.1"
+version = "1.2.0"
 
 project.extra["PluginName"] = "Clan Wars"
 project.extra["PluginDescription"] = "Plugins for Clan Wars Arena"

@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.4"
+version = "1.1.0"
 
 project.extra["PluginName"] = "[w] Missing Players"
 project.extra["PluginDescription"] = "Display missing players from CC."

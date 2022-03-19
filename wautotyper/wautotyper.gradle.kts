@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.2"
+version = "1.1.0"
 
 project.extra["PluginName"] = "[w] Auto Typer"
 project.extra["PluginDescription"] = "Auto types custom message(s)."
