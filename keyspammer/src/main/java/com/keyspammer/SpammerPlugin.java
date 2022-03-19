@@ -6,14 +6,17 @@ import com.google.inject.Provides;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import net.runelite.api.Actor;
 import net.runelite.api.Client;
 import net.runelite.api.Player;
 import net.runelite.api.VarClientStr;
 import net.runelite.api.events.*;
 import net.runelite.client.callback.ClientThread;
+import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -29,8 +32,8 @@ import java.util.Random;
 @PluginDescriptor(
 	name = "Keypress Spammer",
 	enabledByDefault = false,
-	description = "Spams a message upon a manually set keypress",
-	tags = {"spam", "key", "keypress"}
+	description = "Spams a message upon a manually set keypress, and calls pile spams.",
+	tags = {"spam", "key", "keypress", "pile"}
 )
 public class SpammerPlugin extends Plugin
 {
@@ -47,10 +50,11 @@ public class SpammerPlugin extends Plugin
 	@Inject
 	private KeyManager keyManager;
 
-	private String oldChat = "";
-	private String opponentName = "";
-	private boolean autoSpam = false;
-	private int autoSpamDelay = 0;
+	private String oldChat;
+	private String opponentName;
+	private boolean autoSpam;
+	private int autoSpamDelay;
+	private String[] prefixes;
 
 	@Provides
 	SpammerConfig getConfig(ConfigManager configManager)
@@ -77,7 +81,6 @@ public class SpammerPlugin extends Plugin
 		public void hotkeyPressed()
 		{
 			String messageTwo = config.messageTwo();
-
 			if (!messageTwo.equals(""))
 			{
 				sendMessage(messageTwo);
@@ -131,6 +134,8 @@ public class SpammerPlugin extends Plugin
 
 		autoSpam = false;
 		autoSpamDelay = 0;
+
+		updatePrefixes();
 	}
 
 	@Override
@@ -149,6 +154,8 @@ public class SpammerPlugin extends Plugin
 
 		autoSpam = false;
 		autoSpamDelay = 0;
+
+		updatePrefixes();
 	}
 
 	private void pileSpam() {
@@ -186,13 +193,16 @@ public class SpammerPlugin extends Plugin
 
 		opponentName = target.getName();
 
-		//if (opponentName.length() > 4 && config.smallerPileNames()) {
-		//	//hopefully will fix combined names being spammed
-		//	if (opponentName.substring(0,4).equalsIgnoreCase(target.getName().substring(0,4)))
-		//	{
-		//		opponentName = opponentName.substring(0,4);
-		//	}
-		//}
+		if (config.ignorePrefix()) {
+			for (String p : prefixes) {
+				if (opponentName.length() <= p.length()) { continue; }
+				if (opponentName.substring(0, p.length()).equalsIgnoreCase(p)) {
+					opponentName = opponentName.substring(p.length());
+					break;
+				}
+			}
+		}
+
 	}
 
 	private String smallerPileName(String name) {
@@ -230,8 +240,7 @@ public class SpammerPlugin extends Plugin
 		autoSpamDelay--;
 		if (autoSpamDelay < 0) { autoSpamDelay = 0; }
 
-		//log.info("autoSpamDelay:" + autoSpamDelay);
-		if (autoSpam && autoSpamDelay <= 0 && !opponentName.equals("")) {
+		if (autoSpam && autoSpamDelay <= 0) {
 			pileSpam();
 			autoSpamDelay += config.autoPileSpamDelay();
 		}
@@ -247,4 +256,13 @@ public class SpammerPlugin extends Plugin
 			client.setVar(VarClientStr.CHATBOX_TYPED_TEXT, oldChat);
 		});
 	}
+
+	@Subscribe
+	private void onConfigChanged(ConfigChanged event) {
+		if (!event.getGroup().equals("keyspammer")) { return; }
+
+		updatePrefixes();
+	}
+
+	private void updatePrefixes() { prefixes = config.ignoredPrefixes().trim().split("\\s*,\\s*"); }
 }

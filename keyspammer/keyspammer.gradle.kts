@@ -1,9 +1,9 @@
 import ProjectVersions.openosrsVersion
 
-version = "2.0.5"
+version = "2.0.7"
 
 project.extra["PluginName"] = "Keypress Spammer"
-project.extra["PluginDescription"] = "Spams a custom message upon keypress"
+project.extra["PluginDescription"] = "Spams a message upon a manually set keypress, and calls pile spams."
 
 dependencies {
     annotationProcessor(Libraries.lombok)

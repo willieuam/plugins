@@ -24,7 +24,7 @@ public interface SpammerConfig extends Config
 
 	@ConfigItem(
 			keyName = "messageConfig1",
-			position = 2,
+			position = 1,
 			name = "Message One",
 			description = "A message you would like to spam upon keypress",
 			section = keybindSpammer
@@ -38,7 +38,7 @@ public interface SpammerConfig extends Config
 			keyName = "keybind1",
 			name = "Message One Keybind",
 			description = "Configure what button to press to spam",
-			position = 3,
+			position = 2,
 			section = keybindSpammer
 	)
 	default Keybind msgOneKeybind()
@@ -48,7 +48,7 @@ public interface SpammerConfig extends Config
 
 	@ConfigItem(
 			keyName = "messageConfig2",
-			position = 4,
+			position = 3,
 			name = "Message Two",
 			description = "A message you would like to spam upon keypress",
 			section = keybindSpammer
@@ -62,7 +62,7 @@ public interface SpammerConfig extends Config
 			keyName = "keybind2",
 			name = "Message Two Keybind",
 			description = "Configure what button to press to spam",
-			position = 5,
+			position = 4,
 			section = keybindSpammer
 	)
 	default Keybind msgTwoKeybind()
@@ -72,7 +72,7 @@ public interface SpammerConfig extends Config
 
 	@ConfigItem(
 			keyName = "messageConfig3",
-			position = 6,
+			position = 5,
 			name = "Message Three",
 			description = "A message you would like to spam upon keypress",
 			section = keybindSpammer
@@ -86,7 +86,7 @@ public interface SpammerConfig extends Config
 			keyName = "keybind3",
 			name = "Message Three Keybind",
 			description = "Configure what button to press to spam",
-			position = 7,
+			position = 6,
 			section = keybindSpammer
 	)
 	default Keybind msgThreeKeybind()
@@ -156,7 +156,7 @@ public interface SpammerConfig extends Config
 
 	@ConfigItem(
 			keyName = "autoPileSpamDelay",
-			name = "Auto Pile Spam Tick Delay",
+			name = "Delay",
 			description = "Tick delay between auto pile spam messages.",
 			position = 6,
 			section = pileSpammerSection
@@ -164,5 +164,31 @@ public interface SpammerConfig extends Config
 	default int autoPileSpamDelay()
 	{
 		return 4;
+	}
+
+	@ConfigItem(
+			keyName = "ignorePrefix",
+			name = "Ignore Prefix",
+			description = "Ignore specific prefixes, such as clan tags.",
+			position = 7,
+			section = pileSpammerSection
+	)
+	default boolean ignorePrefix()
+	{
+		return false;
+	}
+
+	@ConfigItem(
+			keyName = "ignoredPrefixes",
+			name = "Prefixes",
+			description = "Prefixes to ignore, separated by comma. Not case sensitive.",
+			position = 8,
+			section = pileSpammerSection,
+			hidden = true,
+			unhide = "ignorePrefix"
+	)
+	default String ignoredPrefixes()
+	{
+		return "";
 	}
 }
