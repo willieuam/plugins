@@ -1,6 +1,6 @@
 import ProjectVersions.openosrsVersion
 
-version = "1.0.3"
+version = "1.1.0"
 
 project.extra["PluginName"] = "[w] Auto Tanker"
 project.extra["PluginDescription"] = "Auto Tanker for F2P."
